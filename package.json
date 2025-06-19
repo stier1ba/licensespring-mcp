@@ -1,0 +1,54 @@
+{
+  "name": "licensespring-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) servers for LicenseSpring APIs - providing seamless integration with LicenseSpring's License API and Management API",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "license-api": "tsx src/license-api-server.ts",
+    "management-api": "tsx src/management-api-server.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "licensespring",
+    "license-management",
+    "api-integration",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "axios": "^1.6.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stier1ba/licensespring-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stier1ba/licensespring-mcp/issues"
+  },
+  "homepage": "https://github.com/stier1ba/licensespring-mcp#readme"
+}

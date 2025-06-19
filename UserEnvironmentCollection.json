@@ -1,0 +1,39 @@
+{
+	"id": "b9e5699b-b85f-4360-b2fb-cf5cbdc710c2",
+	"name": "User collection - environment",
+	"values": [
+		{
+			"key": "api_url",
+			"value": "https://saas.licensespring.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "managementApiKey",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "apiKey",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "sharedKey",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "apiUrl",
+			"value": "https://api.licensespring.com",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-04-12T12:49:37.638Z",
+	"_postman_exported_using": "Postman/10.12.9"
+}

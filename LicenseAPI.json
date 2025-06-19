@@ -1,0 +1,2793 @@
+{
+	"info": {
+		"_postman_id": "68c06efe-6fff-4cb3-8d60-28e8871ed62b",
+		"name": "License API",
+		"description": "Please refer to our official documentation:  \n[https://docs.licensespring.com/docs/license-api](https://docs.licensespring.com/docs/license-api)\n\nCheck comments on each request if there are any.\n\nunder environment change {{apiUrl}} to [https://api.licensespring.com](https://api.licenspring.com)\n\nYou can also use same environment as on management api wit provided data ('check documentation for mgmt api key')\n\nNOTE: Run management api first.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3956380"
+	},
+	"item": [
+		{
+			"name": "/api/v4/sso_url",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Date",
+						"value": "Mon, 19 Oct 2023 15:42:27 GMT",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"bPayF9zt/CPO5No0SmIgmqJvzkrr4L+daysaPFleoT0=\",apikey=\"3fcc5deb-86d6-4b2a-933c-97666984bc2d\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"comment\":\"setup your SSO for customer account on platform\",\n    \"documentation\":\"https://licensespring.kwiki.io/docs/single-sign-on\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/sso_url/?response_type=token&product=<product_code>&customer_account_code=<customer_account_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"sso_url",
+						""
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "token"
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						},
+						{
+							"key": "customer_account_code",
+							"value": "<customer_account_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/sso_url",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/sso_url/",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"sso_url",
+								""
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/activate_license",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\", \n    \"product\": \"<product_code>\" \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/activate_license",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"activate_license"
+					],
+					"query": [
+						{
+							"key": "quantity",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "G9PR-X3RA-Y96K-SC55",
+							"disabled": true
+						},
+						{
+							"key": "items",
+							"value": "555",
+							"disabled": true
+						},
+						{
+							"key": "user",
+							"value": "drazen@gmail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/activate_license",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"license_key\": \"GGLG-W4ZK-YYJK-KF55\",\n    \"hardware_id\": \"3h4iy23h42h3ui2h34uh2i\",\n    \"product\": \"555\"\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/activate_license",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"activate_license"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/check_license",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/check_license?hardware_id=<hardware_id>&license_key=<license_key>&product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"check_license"
+					],
+					"query": [
+						{
+							"key": "hardware_id",
+							"value": "<hardware_id>"
+						},
+						{
+							"key": "license_key",
+							"value": "<license_key>"
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/check_license",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/check_license?product=555&hardware_id=3h4iy23h42h3ui2h34uh2i&license_key=GGLG-W4ZK-YYJK-KF55",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"check_license"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "555"
+								},
+								{
+									"key": "hardware_id",
+									"value": "3h4iy23h42h3ui2h34uh2i"
+								},
+								{
+									"key": "license_key",
+									"value": "GGLG-W4ZK-YYJK-KF55"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/add_consumption",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"license_key\": \"<license_key>\", \n    \"hardware_id\": \"<hardware_id>\",\n     \"product\": \"<product_code>\", \n     \"consumptions\": 1, \n     \"max_overages\": 10, \n     \"allow_overages\": true }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/add_consumption",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"add_consumption"
+					],
+					"query": [
+						{
+							"key": "quantity",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "G9PR-X3RA-Y96K-SC55",
+							"disabled": true
+						},
+						{
+							"key": "items",
+							"value": "555",
+							"disabled": true
+						},
+						{
+							"key": "user",
+							"value": "drazen@gmail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/add_consumption",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"GGLG-W4ZK-YYJK-KF55\",\n    \"hardware_id\": \"3h4iy23h42h3ui2h34uh2i\",\n    \"product\": \"555\",\n    \"consumptions\": 5,\n  \t\"max_overages\": 10, \n  \t\"allow_overages\": true\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/add_consumption",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"add_consumption"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/add_feature_consumption",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\",\n    \"product\": \"<product_code>\",\n    \"feature\":\"<feature_code_product+must_be_added_on_that_license\",\n    \"consumptions\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/add_feature_consumption",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"add_feature_consumption"
+					],
+					"query": [
+						{
+							"key": "quantity",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "G9PR-X3RA-Y96K-SC55",
+							"disabled": true
+						},
+						{
+							"key": "items",
+							"value": "555",
+							"disabled": true
+						},
+						{
+							"key": "user",
+							"value": "drazen@gmail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/add_feature_consumption",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"GGLH-UL73-TM2K-KF55\",\n    \"hardware_id\": \"3h4iy23h42h3ui2h34uh2i\",\n    \"product\": \"555\",\n    \"feature\":\"f-053897\",\n    \"consumptions\": 1\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/add_feature_consumption",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"add_feature_consumption"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/trial_key",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"VJlDGHL8xaKm3Q5bD5FQhd32xX3FpZRiHm/nh0gEE4w=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Date",
+						"value": "Mon, 19 Oct 2023 15:42:27 GMT",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/trial_key?hardware_id=<hardware_id>&product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"trial_key"
+					],
+					"query": [
+						{
+							"key": "hardware_id",
+							"value": "<hardware_id>"
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/trial_key",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/trial_key?product=555&hardware_id=3h4iy23h42h3ui2h34uh2i",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"trial_key"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "555"
+								},
+								{
+									"key": "hardware_id",
+									"value": "3h4iy23h42h3ui2h34uh2i"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/product_details",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/product_details?product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"product_details"
+					],
+					"query": [
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/product_details",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/product_details?product=555",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"product_details"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "555"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/track_device_variables",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\",\n    \"product\": \"<product_code>\",\n    \"variables\": {\n    \t\"first_variable\": \"something\",\n        \"another_variable\": \"something else\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/track_device_variables",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"track_device_variables"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/track_device_variables",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"GGLG-W4ZK-YYJK-KF55\",\n    \"hardware_id\": \"3h4iy23h42h3ui2h34uh2i\",\n    \"product\": \"555\",\n    \"variables\": {\n    \t\"first_variable\": \"something\",\n        \"another_variable\": \"something else\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/track_device_variables",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"track_device_variables"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/get_device_variables",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/get_device_variables?hardware_id=<hardware_id>&license_key=<license_key>&product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"get_device_variables"
+					],
+					"query": [
+						{
+							"key": "hardware_id",
+							"value": "<hardware_id>"
+						},
+						{
+							"key": "username",
+							"value": "<user_email>",
+							"disabled": true
+						},
+						{
+							"key": "license_key",
+							"value": "<license_key>"
+						},
+						{
+							"key": "product",
+							"value": "<product_code_user_based_license>",
+							"disabled": true
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/versions",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/get_device_variables?hardware_id=3h4iy23h42h3ui2h34uh2i&product=1337&license_key=46571883",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"get_device_variables"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "hardware_id",
+									"value": "3h4iy23h42h3ui2h34uh2i"
+								},
+								{
+									"key": "product",
+									"value": "1337"
+								},
+								{
+									"key": "license_key",
+									"value": "46571883"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/floating/release",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\",\n    \"product\": \"<product_code>\",\n    \"comment\": \"// edit license and check is floating cloud in order to pass request\"\n}\n\n"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/floating/release",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"floating",
+						"release"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/floating/release",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"{{activate}}\",\n    \"hardware_id\": \"{{hardware_id}}\",\n    \"product\": \"{{product_code}}\"\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/floating/release",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"floating",
+								"release"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/floating/borrow",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\",\n    \"product\": \"<product_code>\",\n    \"borrowed_until\": \"2023-05-06T00:00:00Z\",\n    \"comment\": \"//edit license and check can borrow, put valid time for borrowed_until\"\n}\n\n"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/floating/release",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"floating",
+						"release"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/floating/release",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"GDF8-4TLR-4D6K-NLAW\",\n    \"hardware_id\": \"A497E9B2-A607-5516-AC7F-94498ADE107A-1\",\n    \"product\": \"uprod\",\n    \"borrowed_until\": \"2022-05-06T00:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/floating/release",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"floating",
+								"release"
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/change_password",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"<username>\",\n    \"password\": \"<current_password>\",\n    \"new_password\": \"<new_password>\"\n}\n"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/change_password",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"change_password"
+					],
+					"query": [
+						{
+							"key": "quantity",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "G9PR-X3RA-Y96K-SC55",
+							"disabled": true
+						},
+						{
+							"key": "items",
+							"value": "555",
+							"disabled": true
+						},
+						{
+							"key": "user",
+							"value": "drazen@gmail.com",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/change_password",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"metestme89+epzeA@gmail.com\",\n    \"password\": \"Santos123\",\n    \"new_password\": \"Santos123\"\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/change_password",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"change_password"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/versions",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/versions?hardware_id=<hardware_id>&license_key=<license_key>&product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"versions"
+					],
+					"query": [
+						{
+							"key": "hardware_id",
+							"value": "<hardware_id>"
+						},
+						{
+							"key": "license_key",
+							"value": "<license_key>"
+						},
+						{
+							"key": "product",
+							"value": "<product_code_user>",
+							"disabled": true
+						},
+						{
+							"key": "username",
+							"value": "<user_email>",
+							"disabled": true
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/versions",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/versions?product=555&hardware_id=3h4iy23h42h3ui2h34uh2i&license_key=GGLG-W4ZK-YYJK-KF55",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"versions"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "555"
+								},
+								{
+									"key": "hardware_id",
+									"value": "3h4iy23h42h3ui2h34uh2i"
+								},
+								{
+									"key": "license_key",
+									"value": "GGLG-W4ZK-YYJK-KF55"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/installation_file",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/installation_file?hardware_id=hardware_id>&license_key=<license_key>&product=<product_code>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"installation_file"
+					],
+					"query": [
+						{
+							"key": "hardware_id",
+							"value": "hardware_id>"
+						},
+						{
+							"key": "license_key",
+							"value": "<license_key>"
+						},
+						{
+							"key": "product",
+							"value": "<product_code_user>",
+							"disabled": true
+						},
+						{
+							"key": "username",
+							"value": "<user_email>",
+							"disabled": true
+						},
+						{
+							"key": "product",
+							"value": "<product_code>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/installation_file",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/installation_file?product=555&hardware_id=3h4iy23h42h3ui2h34uh2i&license_key=GGLG-W4ZK-YYJK-KF55",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"installation_file"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "555"
+								},
+								{
+									"key": "hardware_id",
+									"value": "3h4iy23h42h3ui2h34uh2i"
+								},
+								{
+									"key": "license_key",
+									"value": "GGLG-W4ZK-YYJK-KF55"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/customer_license_users",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer\": {\n        \"email\": \"change@change.com\",\n        \"first_name\": \"\",\n        \"last_name\": \"\",\n        \"company_name\": \"\",\n        \"phone\": \"\",\n        \"reference\": \"\",\n        \"address\": \"\",\n        \"postcode\": \"\",\n        \"city\": \"\",\n        \"country\": \"\",\n        \"state\": \"\"\n    },\n    \"users\": [\n        {\n            \"email\": \"test1@example.com\",\n            \"is_active\": true,\n            \"first_name\": \"\",\n            \"last_name\": \"\",\n            \"phone_number\": \"\",\n            \"is_initial_password\": true,\n            \"initial_password\": \"t218_uv@\",\n            \"license_id\": 34524352345,\n            \"order_store_id\": \"67e58562adfsfsdf1aff4b1f551d30326\",\n            \"order_id\": 45367563535423\n        },\n        {\n            \"email\": \"test2@example.com\",\n            \"is_active\": true,\n            \"first_name\": \"0\",\n            \"last_name\": \"0\",\n            \"phone_number\": \"0\",\n            \"is_initial_password\": false,\n            \"initial_password\": \"\",\n            \"license_id\": 786856745645,\n            \"order_store_id\": \"gdfge34r4fqf44qqrf43f\",\n            \"order_id\": 653456345635\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/customer_license_users?product=<product_code_for_user_based_license>&customer=<customer_email>",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"customer_license_users"
+					],
+					"query": [
+						{
+							"key": "product",
+							"value": "<product_code_for_user_based_license>"
+						},
+						{
+							"key": "customer",
+							"value": "<customer_email>"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/customer_license_users",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/customer_license_users?product=coo1m&customer=change@change.com",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"customer_license_users"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "product",
+									"value": "coo1m"
+								},
+								{
+									"key": "customer",
+									"value": "change@change.com"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/deactivate_license",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"license_key\": \"<license_key>\",\n    \"hardware_id\": \"<hardware_id>\",\n    \"product\": \"<product_code>\"\n}\n"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/deactivate_license",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"deactivate_license"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/deactivate_license",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"license_key\": \"GGLG-W4ZK-YYJK-KF55\",\n    \"hardware_id\": \"3h4iy23h42h3ui2h34uh2i\",\n    \"product\": \"555\"\n}"
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/deactivate_license",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"deactivate_license"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/activate_offline",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// use {{offa}} in body to activate license key based",
+							"pm.environment.set(\"license_key\",\"GXVB-WQXS-M66K-4613\")",
+							"pm.environment.set(\"hardware_id\",\"123\")",
+							"pm.environment.set(\"product_code\",\"1337\")",
+							"",
+							"// use {{user_offa}} in body to deactivate license key based",
+							"//example, click on license that is user based",
+							"// path will show something like this",
+							"// 276/orders/1680869396337879/1680869396337889",
+							"// last in path is your license user key for user based license",
+							"pm.environment.set(\"license_user_key\",\"1680869396337889\")",
+							"pm.environment.set(\"user_email\",\"end-user@gmail.com\")",
+							"pm.environment.set(\"user_pwd\",\"Santos123\")",
+							"pm.environment.set(\"hardware_id1\",\"123\")",
+							"pm.environment.set(\"product_code_user\",\"111\")",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{offa}}"
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/activate_offline",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"activate_offline"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/activate_offline",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "eyJyZXF1ZXN0IjoiYWN0aXZhdGlvbiIsInJlcXVlc3RfaWQiOiJhMmI0MGIxZC1kMmU3LTQ2YjMtOTczZS0yNzkyZmFjYjg5MmEiLCJsaWNlbnNlX2tleSI6IjEzNTc3MzMxMzU3NDEiLCJoYXJkd2FyZV9pZCI6IjNoNGl5MjNoNDJoM3VpMmgzNHVoMmkiLCJwcm9kdWN0IjoiNTU1IiwiZGF0ZSI6Ik1vbiwgMTkgT2N0IDIwMjAgMTU6NDI6MjcgR01UIiwiYXBpX2tleSI6IjA3ZGQyMTdiLTQ2YjItNGUzYS1hOTE0LWZmMWQ3M2NmYWU3OSIsInNpZ25hdHVyZSI6IlNVM3UybGJORXBURTZ5Qkx2a1AwQWdQUnNVRElCOHRTdnhpOTc3MVJScmc9In0="
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/activate_offline",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"activate_offline"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/v4/deactivate_offline",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// // use {{offd}} in body to deactivate license key based",
+							"pm.environment.set(\"license_key\",\"GXPV-3D9N-EYJK-4C13\")",
+							"pm.environment.set(\"hardware_id\",\"123\")",
+							"pm.environment.set(\"product_code\",\"1337\")",
+							"",
+							"// use {{user_offd}} in body to deactivate license key based",
+							"//example, click on license that is user based",
+							"// path will show something like this",
+							"// 276/orders/1680869396337879/1680869396337889",
+							"// last in path is your license user key for user based license",
+							"pm.environment.set(\"license_user_key\",\"1680869396337889\")",
+							"pm.environment.set(\"user_email\",\"end-user@gmail.com\")",
+							"pm.environment.set(\"user_pwd\",\"Santos123\")",
+							"pm.environment.set(\"hardware_id\",\"123\")",
+							"pm.environment.set(\"product_code_user\",\"111\")",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{offd}}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiUrl}}/api/v4/activate_offline",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"activate_offline"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "/api/v4/deactivate_offline",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							},
+							{
+								"key": "Date",
+								"value": "Mon, 19 Oct 2020 15:42:27 GMT",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json;charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "algorithm=\"hmac-sha256\",headers=\"date\",signature=\"2ess82gua67GwUsWE1u7GCp59MFHniulVXEZjp09dt8=\",apikey=\"07dd217b-46b2-4e3a-a914-ff1d73cfae79\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "eyJyZXF1ZXN0IjoiZGVhY3RpdmF0aW9uIiwicmVxdWVzdF9pZCI6ImEyYjQwYjFkLWQyZTctNDZiMy05NzNlLTI3OTJmYWNiODkyYiIsImxpY2Vuc2Vfa2V5IjoiMTM1NzczMzEzNTc0MSIsImhhcmR3YXJlX2lkIjoiM2g0aXkyM2g0MmgzdWkyaDM0dWgyaSIsInByb2R1Y3QiOiI1NTUiLCJkYXRlIjoiTW9uLCAxOSBPY3QgMjAyMCAxNTo0MjoyNyBHTVQiLCJhcGlfa2V5IjoiMDdkZDIxN2ItNDZiMi00ZTNhLWE5MTQtZmYxZDczY2ZhZTc5Iiwic2lnbmF0dXJlIjoiU1UzdTJsYk5FcFRFNnlCTHZrUDBBZ1BSc1VESUI4dFN2eGk5NzcxUlJyZz0ifQ=="
+						},
+						"url": {
+							"raw": "https://api.licensespring.com/api/v4/deactivate_offline",
+							"protocol": "https",
+							"host": [
+								"api",
+								"licensespring",
+								"com"
+							],
+							"path": [
+								"api",
+								"v4",
+								"deactivate_offline"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "G9PR-X3RA-Y96K-SC55",
+									"disabled": true
+								},
+								{
+									"key": "items",
+									"value": "555",
+									"disabled": true
+								},
+								{
+									"key": "user",
+									"value": "drazen@gmail.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var crypto = require('crypto-js'),",
+					"shared_key = pm.variables.get('sharedKey'),",
+					"apiKey = pm.variables.get('apiKey')",
+					"const signingDate = (new Date()).toUTCString(),",
+					"signingString = `licenseSpring\\ndate: ${signingDate}`;",
+					"",
+					"var hmac = crypto.algo.HMAC.create(CryptoJS.algo.SHA256, shared_key);",
+					"hmac.update(signingString);",
+					"var hash1 = hmac.finalize();",
+					"var signature = CryptoJS.enc.Base64.stringify(hash1);",
+					"",
+					"//console.log(signature);",
+					"var auth = `algorithm=\"hmac-sha256\",headers=\"date\",signature=\"${signature}\",apikey=\"${apiKey}\"`",
+					"pm.variables.set('signingDate',signingDate)",
+					"pm.variables.set('authorization',auth)",
+					"pm.request.headers.add({key:'Content-Type', ",
+					"        value:'application/json'});",
+					"pm.request.headers.add({key:'Date',",
+					"        value:signingDate});",
+					"pm.request.headers.add({key:'Authorization',",
+					"        value: `algorithm=\"hmac-sha256\",headers=\"date\",signature=\"${signature}\",apikey=\"${apiKey}\"`});",
+					"offline_signing_string = 'licenseSpring\\ndate: '+signingDate+'\\n'+pm.environment.get('license_key')+'\\n'+pm.environment.get('hardware_id')+'\\n'+apiKey+''",
+					"var hmac1 = crypto.algo.HMAC.create(CryptoJS.algo.SHA256, shared_key);",
+					"hmac1.update(offline_signing_string);",
+					"var hash2 = hmac1.finalize();",
+					"var offline_signature = CryptoJS.enc.Base64.stringify(hash2);",
+					"ls_activation = '{\"request\":\"activation\",\"request_id\":\"a2b40b1d-d2e7-46b3-973e-2792facb892a\",\"license_key\":\"'+pm.environment.get('license_key')+'\",\"hardware_id\":\"'+pm.environment.get('hardware_id')+'\",\"product\":\"'+pm.environment.get('product_code')+'\",\"date\":\"'+signingDate+'\",\"api_key\":\"'+pm.variables.get('apiKey')+'\",\"signature\":\"'+offline_signature+'\"}'",
+					"ls_deactivation = '{\"request\":\"deactivation\",\"request_id\":\"a2b40b1d-d2e7-46b3-973e-2792facb892b\",\"license_key\":\"'+pm.environment.get('license_key')+'\",\"hardware_id\":\"'+pm.environment.get('hardware_id')+'\",\"product\":\"'+pm.environment.get('product_code')+'\",\"date\":\"'+signingDate+'\",\"api_key\":\"'+pm.variables.get('apiKey')+'\",\"signature\":\"'+offline_signature+'\"}'",
+					"var myBuffer = [];",
+					"var str = ls_activation;",
+					"var buffer1 = new Buffer(str, 'utf16le');",
+					"for (var i = 0; i < buffer1.length; i++) {",
+					"    myBuffer.push(buffer1[i]);",
+					"}",
+					"",
+					"//console.log(myBuffer);",
+					"function b64EncodeUnicode1(myBuffer) {",
+					"        // first we use encodeURIComponent to get percent-encoded UTF-8,",
+					"        // then we convert the percent encodings into raw bytes which",
+					"        // can be fed into btoa.",
+					"        return btoa(encodeURIComponent(ls_deactivation).replace(/%([0-9A-F]{2})/g,",
+					"            function toSolidBytes(match, p1) {",
+					"                return String.fromCharCode('0x' + p1);",
+					"        }));",
+					"    }",
+					"",
+					"var x = b64EncodeUnicode1(myBuffer)",
+					"function decode_utf8(s) {",
+					"  return decodeURIComponent(escape(s));",
+					"}",
+					"var offa = decode_utf8(x)",
+					"pm.variables.set('offa',offa)",
+					"function b64EncodeUnicode2(myBuffer) {",
+					"        // first we use encodeURIComponent to get percent-encoded UTF-8,",
+					"        // then we convert the percent encodings into raw bytes which",
+					"        // can be fed into btoa.",
+					"        return btoa(encodeURIComponent(ls_deactivation).replace(/%([0-9A-F]{2})/g,",
+					"            function toSolidBytes(match, p1) {",
+					"                return String.fromCharCode('0x' + p1);",
+					"        }));",
+					"    }",
+					"var off = [];",
+					"var offa = ls_deactivation;",
+					"var bufferr2 = new Buffer(offa, 'utf16le');",
+					"for (var i = 0; i < bufferr2.length; i++) {",
+					"    off.push(bufferr2[i]);",
+					"}",
+					"",
+					"//console.log(off);",
+					"var y = b64EncodeUnicode2(off)",
+					"var offd = decode_utf8(y)",
+					"pm.variables.set('offd',offd)",
+					"// console.log(offa)",
+					"offline_signing_string_user = 'licenseSpring\\ndate: '+signingDate+'\\n'+pm.environment.get('license_user_key')+'\\n'+pm.environment.get('hardware_id')+'\\n'+apiKey+''",
+					"var hmac = crypto.algo.HMAC.create(CryptoJS.algo.SHA256, shared_key);",
+					"hmac.update(offline_signing_string_user);",
+					"var hash21 = hmac.finalize();",
+					"var offline_signature1 = CryptoJS.enc.Base64.stringify(hash21);",
+					"ls_activation_user ='{\"request\":\"activation\",\"request_id\":\"a2b40b1d-d2e7-46b3-973e-2792facb892a\",\"license_key\":\"'+pm.variables.get('license_user_key')+'\",\"username\":\"'+pm.variables.get('user_email')+'\",\"password\":\"'+pm.variables.get('user_pwd')+'\",\"hardware_id\":\"'+pm.variables.get('hardware_id')+'\",\"product\":\"'+pm.variables.get('product_code_user')+'\",\"date\":\"'+signingDate+'\",\"api_key\":\"'+apiKey+'\",\"signature\":\"'+offline_signature1+'\"}'",
+					"",
+					"function b64EncodeUnicode3(myBuffer) {",
+					"        // first we use encodeURIComponent to get percent-encoded UTF-8,",
+					"        // then we convert the percent encodings into raw bytes which",
+					"        // can be fed into btoa.",
+					"        return btoa(encodeURIComponent(ls_activation_user).replace(/%([0-9A-F]{2})/g,",
+					"            function toSolidBytes(match, p1) {",
+					"                return String.fromCharCode('0x' + p1);",
+					"        }));",
+					"    }",
+					"var user_based = [];",
+					"var usr = ls_activation_user;",
+					"var buffer3 = new Buffer(usr, 'utf16le');",
+					"for (var i = 0; i < buffer3.length; i++) {",
+					"    user_based.push(buffer3[i]);",
+					"}",
+					"",
+					"var m = b64EncodeUnicode3(user_based)",
+					"var user_offa = decode_utf8(m)",
+					"pm.variables.set('user_offa',user_offa)",
+					"// console.log(user_offa)",
+					"ls_deactivation_user = '{\"request\":\"deactivation\",\"request_id\":\"a2b40b1d-d2e7-46b3-973e-2792facb892a\",\"license_key\":\"'+pm.variables.get('license_user_key')+'\",\"username\":\"'+pm.variables.get('user_email')+'\",\"password\":\"'+pm.variables.get('user_pwd')+'\",\"hardware_id\":\"'+pm.variables.get('hardware_id')+'\",\"product\":\"'+pm.variables.get('product_code_user')+'\",\"date\":\"'+signingDate+'\",\"api_key\":\"'+apiKey+'\",\"signature\":\"'+offline_signature1+'\"}'",
+					"",
+					"// '{\"request\":\"deactivation\",\"request_id\":\"a2b40b1d-d2e7-46b3-973e-2792facb892a\",\"username\":\"'+pm.environment.get('user_email')+'\",\"password\":\"'+pm.environment.get('user_pwd')+'\",\"hardware_id\":\"'+pm.environment.get('hardware_id')+'\",\"product\":\"'+pm.environment.get('product_code_user')+'\",\"date\":\"'+signingDate+'\",\"+api_key+\":\"'+pm.variables.get('apiKey')+'\",\"'+signature+'\":\"'+offline_signature+'\"}'",
+					"function b64EncodeUnicode4(myBuffer) {",
+					"        // first we use encodeURIComponent to get percent-encoded UTF-8,",
+					"        // then we convert the percent encodings into raw bytes which",
+					"        // can be fed into btoa.",
+					"        return btoa(encodeURIComponent(ls_deactivation_user).replace(/%([0-9A-F]{2})/g,",
+					"            function toSolidBytes(match, p1) {",
+					"                return String.fromCharCode('0x' + p1);",
+					"        }));",
+					"    }",
+					"var user_based_d = [];",
+					"var usrd = ls_deactivation_user;",
+					"var buffer4 = new Buffer(usrd, 'utf16le');",
+					"for (var i = 0; i < buffer4.length; i++) {",
+					"    user_based_d.push(buffer4[i]);",
+					"}",
+					"",
+					"var n = b64EncodeUnicode4(user_based_d)",
+					"var user_offd = decode_utf8(n)",
+					"pm.variables.set('user_offd',user_offd)",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "managerEmail",
+			"value": "Tyshawn16@gmail.com",
+			"type": "string"
+		}
+	]
+}
