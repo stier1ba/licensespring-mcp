@@ -18,7 +18,7 @@ const LICENSE_SHARED_KEY = process.env.LICENSE_SHARED_KEY;
 validateLicenseApiAuth(LICENSE_API_KEY, LICENSE_SHARED_KEY);
 
 // Create HTTP client
-const apiClient = new LicenseApiClient(LICENSE_API_URL, LICENSE_API_KEY!, LICENSE_SHARED_KEY!);
+const apiClient = new LicenseApiClient(LICENSE_API_URL, LICENSE_API_KEY!, LICENSE_SHARED_KEY);
 
 // Create MCP server
 const server = new McpServer({

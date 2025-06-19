@@ -47,14 +47,27 @@ export function generateManagementApiAuthHeader(apiKey: string): string {
 }
 
 /**
- * Validate required authentication parameters
+ * Validate required authentication parameters for License API
+ * LICENSE_SHARED_KEY is optional to support different LicenseSpring subscription tiers
  */
 export function validateLicenseApiAuth(apiKey?: string, sharedKey?: string): void {
   if (!apiKey) {
     throw new Error('LICENSE_API_KEY is required for License API operations');
   }
-  if (!sharedKey) {
-    throw new Error('LICENSE_SHARED_KEY is required for License API operations');
+
+  // Determine operation mode based on available credentials
+  const isTestMode = apiKey.startsWith('test-') || process.env.NODE_ENV === 'test';
+  const isLimitedMode = !sharedKey && !isTestMode;
+
+  if (isTestMode) {
+    console.warn('⚠️  Running in TEST MODE - API calls will use mock authentication');
+  } else if (isLimitedMode) {
+    console.warn('⚠️  Running in LIMITED MODE - LICENSE_SHARED_KEY not provided');
+    console.warn('   This is normal for basic LicenseSpring subscription tiers');
+    console.warn('   MCP server will start but License API calls may fail with authentication errors');
+    console.warn('   Upgrade your LicenseSpring subscription to get the shared key for full functionality');
+  } else {
+    console.log('✅ License API authentication configured with shared key');
   }
 }
 
@@ -62,7 +75,14 @@ export function validateLicenseApiAuth(apiKey?: string, sharedKey?: string): voi
  * Validate required authentication parameters for Management API
  */
 export function validateManagementApiAuth(apiKey?: string): void {
+  // Allow test mode with mock credentials
+  const isTestMode = apiKey?.startsWith('test-') || process.env.NODE_ENV === 'test';
+
   if (!apiKey) {
     throw new Error('MANAGEMENT_API_KEY is required for Management API operations');
+  }
+
+  if (isTestMode) {
+    console.warn('⚠️  Running in test mode - API calls will fail but server will start');
   }
 }

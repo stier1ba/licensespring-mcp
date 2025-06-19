@@ -1,0 +1,208 @@
+{
+  "timestamp": "2025-06-19T04:11:27.191Z",
+  "summary": {
+    "totalServers": 2,
+    "totalTests": 12,
+    "totalPassed": 11,
+    "totalFailed": 1,
+    "totalIssues": 1
+  },
+  "servers": [
+    {
+      "serverName": "License API Server",
+      "passed": 6,
+      "failed": 0,
+      "complianceIssues": []
+    },
+    {
+      "serverName": "Management API Server",
+      "passed": 5,
+      "failed": 1,
+      "complianceIssues": [
+        "Server should handle invalid inputs gracefully"
+      ]
+    }
+  ],
+  "logs": [
+    {
+      "timestamp": "04:11:25",
+      "type": "info",
+      "message": "\n=== Testing MCP Compliance: License API Server ===",
+      "testId": 0
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "License API Server started successfully",
+      "testId": 0
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 1: Protocol Version Compliance",
+      "testId": 1
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Protocol version compliance: PASS",
+      "testId": 1
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 2: Capabilities Declaration",
+      "testId": 2
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Capabilities declaration: PASS",
+      "testId": 2
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "info",
+      "message": "   Declared capabilities: resources, completions, prompts, tools",
+      "testId": 2
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 3: Tool Schema Compliance",
+      "testId": 3
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Tool schema compliance: PASS",
+      "testId": 3
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 4: Error Handling Compliance",
+      "testId": 4
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Error handling (invalid method): PASS",
+      "testId": 4
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 5: Invalid Input Handling",
+      "testId": 5
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Invalid input handling: PASS",
+      "testId": 5
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 6: Resource Schema Compliance",
+      "testId": 6
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Resource schema compliance: PASS",
+      "testId": 6
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "info",
+      "message": "\n=== Testing MCP Compliance: Management API Server ===",
+      "testId": 6
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "Management API Server started successfully",
+      "testId": 6
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 7: Protocol Version Compliance",
+      "testId": 7
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Protocol version compliance: PASS",
+      "testId": 7
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 8: Capabilities Declaration",
+      "testId": 8
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Capabilities declaration: PASS",
+      "testId": 8
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "info",
+      "message": "   Declared capabilities: resources, completions, prompts, tools",
+      "testId": 8
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 9: Tool Schema Compliance",
+      "testId": 9
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Tool schema compliance: PASS",
+      "testId": 9
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 10: Error Handling Compliance",
+      "testId": 10
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "success",
+      "message": "✅ Error handling (invalid method): PASS",
+      "testId": 10
+    },
+    {
+      "timestamp": "04:11:26",
+      "type": "test",
+      "message": "Test 11: Invalid Input Handling",
+      "testId": 11
+    },
+    {
+      "timestamp": "04:11:27",
+      "type": "error",
+      "message": "❌ Invalid input handling: FAIL",
+      "testId": 11
+    },
+    {
+      "timestamp": "04:11:27",
+      "type": "test",
+      "message": "Test 12: Resource Schema Compliance",
+      "testId": 12
+    },
+    {
+      "timestamp": "04:11:27",
+      "type": "success",
+      "message": "✅ Resource schema compliance: PASS",
+      "testId": 12
+    }
+  ]
+}

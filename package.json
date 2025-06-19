@@ -1,19 +1,30 @@
 {
-  "name": "licensespring-mcp",
+  "name": "@modelcontextprotocol/server-licensespring",
   "version": "1.0.0",
-  "description": "Model Context Protocol (MCP) servers for LicenseSpring APIs - providing seamless integration with LicenseSpring's License API and Management API",
-  "main": "dist/index.js",
+  "description": "MCP server for LicenseSpring API integration - License management and customer operations",
+  "main": "dist/license-api-server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && shx chmod +x dist/*.js",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "license-api": "tsx src/license-api-server.ts",
-    "management-api": "tsx src/management-api-server.ts",
+    "license-api": "node dist/license-api-server.js",
+    "management-api": "node dist/management-api-server.js",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "install-claude": "node install-for-claude.js install",
+    "uninstall-claude": "node install-for-claude.js uninstall",
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build"
   },
+  "bin": {
+    "mcp-server-licensespring": "./dist/license-api-server.js",
+    "mcp-server-licensespring-management": "./dist/management-api-server.js"
+  },
+  "files": [
+    "dist/"
+  ],
   "keywords": [
     "mcp",
     "model-context-protocol",
@@ -37,6 +48,7 @@
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
     "jest": "^29.7.0",
+    "shx": "^0.3.4",
     "ts-jest": "^29.2.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"

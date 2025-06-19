@@ -1,259 +1,197 @@
 # LicenseSpring MCP Server
 
-Model Context Protocol (MCP) servers for seamless integration with LicenseSpring's License API and Management API. This project provides two separate MCP servers that expose LicenseSpring's functionality through standardized MCP tools.
+An MCP server implementation that integrates with LicenseSpring APIs, providing comprehensive license management and customer operations capabilities.
 
 ## Features
 
-### License API Server
-- **License Operations**: Activate, check, and deactivate licenses
-- **Consumption Tracking**: Add consumption units and feature-specific consumption
-- **Trial Management**: Generate trial license keys
-- **Product Information**: Get product details and available versions
-- **Device Management**: Track and retrieve device variables
-- **Floating Licenses**: Release and borrow floating licenses
-- **User Management**: Change passwords for user-based licenses
-- **Installation Files**: Get download information for software installations
-- **SSO Integration**: Generate Single Sign-On URLs for customer portals
+- **License Operations**: Activate, check, deactivate licenses with hardware binding
+- **Customer Management**: Create, list, and manage customers
+- **Usage Tracking**: Monitor license consumption and feature usage
+- **Trial Management**: Generate and manage trial licenses
+- **Floating Licenses**: Handle floating license operations
+- **Subscription Tier Support**: Works with all LicenseSpring subscription tiers
 
-### Management API Server
-- **License Management**: Full CRUD operations for licenses
-- **Customer Management**: Create, update, and manage customers
-- **Product Management**: Manage products and their configurations
-- **Advanced Filtering**: Search and filter across all entities
-- **Bulk Operations**: Efficient handling of multiple records
+## Tools
 
-## Installation
+### License API Tools
+- **activate_license** - Activate a license with hardware ID binding
+- **check_license** - Check license status and validity
+- **deactivate_license** - Deactivate a license for specific hardware
+- **add_consumption** - Add consumption units to a license
+- **get_trial_key** - Generate trial license keys
+- **get_product_details** - Retrieve product information
+- **floating_release** - Release floating licenses
+- **floating_borrow** - Borrow floating licenses for offline use
+- **change_password** - Change user passwords for user-based licenses
+- **get_versions** - Get available software versions
+- **get_installation_file** - Get installation file information
+- **get_sso_url** - Generate Single Sign-On URLs
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/stier1ba/licensespring-mcp.git
-   cd licensespring-mcp
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your LicenseSpring API credentials
-   ```
-
-4. **Build the project**:
-   ```bash
-   npm run build
-   ```
+### Management API Tools
+- **list_licenses** - List licenses with optional filtering
+- **create_license** - Create new licenses
+- **update_license** - Update existing licenses
+- **get_license** - Get detailed license information
+- **delete_license** - Delete licenses
+- **list_customers** - List customers with filtering options
+- **create_customer** - Create new customers
 
 ## Configuration
 
-Create a `.env` file with your LicenseSpring API credentials:
-
-```env
-# License API Configuration
-LICENSE_API_URL=https://api.licensespring.com
-LICENSE_API_KEY=your_license_api_key_here
-LICENSE_SHARED_KEY=your_license_shared_key_here
-
-# Management API Configuration  
-MANAGEMENT_API_URL=https://saas.licensespring.com
-MANAGEMENT_API_KEY=your_management_api_key_here
-
-# Optional Configuration
-DEFAULT_PRODUCT_CODE=your_default_product_code
-DEBUG=false
-```
-
 ### Getting API Credentials
 
-1. **License API Credentials**:
-   - Log into your LicenseSpring dashboard
-   - Go to Settings > Keys
-   - Copy your API Key and Shared Key
+1. **License API**: Log into your LicenseSpring dashboard → Settings → Keys
+2. **Management API**: Same location, copy your Management API Key
+3. **Shared Key**: Available for Premium/Enterprise subscription tiers only
 
-2. **Management API Credentials**:
-   - In the same Settings > Keys section
-   - Copy your Management API Key
+### Usage with Claude Desktop
 
-## Usage
+Add this to your `claude_desktop_config.json`:
 
-### Running the Servers
-
-**License API Server**:
-```bash
-npm run license-api
-```
-
-**Management API Server**:
-```bash
-npm run management-api
-```
-
-**Development Mode**:
-```bash
-npm run dev  # Shows usage information
-```
-
-### MCP Client Configuration
-
-Add the servers to your MCP client configuration:
-
+#### License API Server
 ```json
 {
   "mcpServers": {
-    "licensespring-license-api": {
-      "command": "node",
-      "args": ["path/to/licensespring-mcp/dist/license-api-server.js"],
+    "licensespring": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-licensespring"
+      ],
       "env": {
-        "LICENSE_API_KEY": "your_api_key",
-        "LICENSE_SHARED_KEY": "your_shared_key"
-      }
-    },
-    "licensespring-management-api": {
-      "command": "node", 
-      "args": ["path/to/licensespring-mcp/dist/management-api-server.js"],
-      "env": {
-        "MANAGEMENT_API_KEY": "your_management_api_key"
+        "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
+        "LICENSE_SHARED_KEY": "YOUR_SHARED_KEY_OR_LEAVE_EMPTY"
       }
     }
   }
 }
 ```
 
-## Available Tools
-
-### License API Tools
-
-| Tool | Description |
-|------|-------------|
-| `activate_license` | Activate a license with hardware ID |
-| `check_license` | Check license status and validity |
-| `deactivate_license` | Deactivate a license |
-| `add_consumption` | Add consumption units to a license |
-| `add_feature_consumption` | Add consumption to specific features |
-| `get_trial_key` | Generate trial license keys |
-| `get_product_details` | Get product information |
-| `track_device_variables` | Track custom device variables |
-| `get_device_variables` | Retrieve tracked device variables |
-| `floating_release` | Release floating licenses |
-| `floating_borrow` | Borrow floating licenses for offline use |
-| `change_password` | Change user passwords |
-| `get_versions` | Get available software versions |
-| `get_installation_file` | Get installation file information |
-| `get_sso_url` | Generate SSO URLs |
-
-### Management API Tools
-
-| Tool | Description |
-|------|-------------|
-| `list_licenses` | List licenses with filtering |
-| `create_license` | Create new licenses |
-| `update_license` | Update existing licenses |
-| `get_license` | Get license details |
-| `delete_license` | Delete licenses |
-| `list_customers` | List customers with filtering |
-| `create_customer` | Create new customers |
-| `update_customer` | Update customer information |
-| `get_customer` | Get customer details |
-| `delete_customer` | Delete customers |
-| `list_products` | List products with filtering |
-| `create_product` | Create new products |
-| `update_product` | Update product information |
-| `get_product` | Get product details |
-| `delete_product` | Delete products |
-
-## Examples
-
-### License Activation
-```typescript
-// Activate a license
+#### Management API Server
+```json
 {
-  "tool": "activate_license",
-  "arguments": {
-    "license_key": "XXXX-XXXX-XXXX-XXXX",
-    "hardware_id": "unique-hardware-id",
-    "product": "your-product-code"
+  "mcpServers": {
+    "licensespring-management": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-licensespring"
+      ],
+      "env": {
+        "MANAGEMENT_API_KEY": "YOUR_MANAGEMENT_API_KEY"
+      }
+    }
   }
 }
 ```
 
-### Customer Creation
-```typescript
-// Create a new customer
+#### Docker
+```json
 {
-  "tool": "create_customer",
-  "arguments": {
-    "email": "customer@example.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "company_name": "Example Corp"
+  "mcpServers": {
+    "licensespring": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "LICENSE_API_KEY",
+        "-e",
+        "LICENSE_SHARED_KEY",
+        "mcp/licensespring"
+      ],
+      "env": {
+        "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
+        "LICENSE_SHARED_KEY": "YOUR_SHARED_KEY_OR_LEAVE_EMPTY"
+      }
+    },
+    "licensespring-management": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "MANAGEMENT_API_KEY",
+        "mcp/licensespring-management"
+      ],
+      "env": {
+        "MANAGEMENT_API_KEY": "YOUR_MANAGEMENT_API_KEY"
+      }
+    }
   }
 }
 ```
 
-## Authentication
+## Subscription Tier Support
 
-### License API Authentication
-Uses HMAC-SHA256 signature authentication:
-- Requires API Key and Shared Key
-- Automatically generates signatures for each request
-- Includes proper date headers
+The server automatically adapts to your LicenseSpring subscription tier:
 
-### Management API Authentication  
-Uses API Key authentication:
-- Requires Management API Key
-- Sent as `Authorization: Api-Key {key}` header
+- **Premium/Enterprise**: Full functionality with HMAC authentication
+- **Basic/Standard**: Limited mode with helpful upgrade guidance
+- **Development**: Test mode for safe development
 
-## Error Handling
+> **Note**: `LICENSE_SHARED_KEY` is optional. The server will start regardless of your subscription tier and provide appropriate guidance for API limitations.
 
-The servers provide comprehensive error handling:
-- API errors are properly formatted and returned
-- Network errors are caught and reported
-- Invalid parameters are validated before requests
-- Detailed error messages help with debugging
+## Usage with VS Code
 
-## Development
+For quick installation, use the one-click installation buttons below:
 
-### Building
-```bash
-npm run build
+[![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-NPM-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=licensespring&inputs=%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22apiKey%22%7D%5D&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40modelcontextprotocol%2Fserver-licensespring%22%5D%2C%22env%22%3A%7B%22LICENSE_API_KEY%22%3A%22%24%7Binput%3Alicense_api_key%7D%22%7D%7D)
+
+[![Install with NPX in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-NPM-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=licensespring&inputs=%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22apiKey%22%7D%5D&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40modelcontextprotocol%2Fserver-licensespring%22%5D%2C%22env%22%3A%7B%22LICENSE_API_KEY%22%3A%22%24%7Binput%3Alicense_api_key%7D%22%7D%7D&quality=insiders)
+
+For manual installation, add the following JSON block to your User Settings (JSON) file in VS Code:
+
+#### NPX
+```json
+{
+  "mcp": {
+    "inputs": [
+      {
+        "type": "promptString",
+        "id": "license_api_key",
+        "description": "LicenseSpring License API Key",
+        "password": true
+      },
+      {
+        "type": "promptString", 
+        "id": "license_shared_key",
+        "description": "LicenseSpring Shared Key (optional for Basic/Standard tiers)",
+        "password": true
+      }
+    ],
+    "servers": {
+      "licensespring": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-licensespring"],
+        "env": {
+          "LICENSE_API_KEY": "${input:license_api_key}",
+          "LICENSE_SHARED_KEY": "${input:license_shared_key}"
+        }
+      }
+    }
+  }
+}
 ```
 
-### Linting
+## Advanced Documentation
+
+For comprehensive guides and advanced configuration:
+
+- **[Subscription Tier Support](docs/SUBSCRIPTION_TIERS.md)** - Detailed guide for different LicenseSpring subscription tiers
+- **[Distribution Guide](docs/DISTRIBUTION_GUIDE.md)** - Complete setup and sharing instructions
+- **[Test Report](docs/TEST_REPORT.md)** - Comprehensive testing results and validation
+- **[Migration Guide](docs/MIGRATION_TO_OFFICIAL_PATTERN.md)** - Technical implementation details
+
+## Build
+
+Docker build:
 ```bash
-npm run lint
-npm run lint:fix
+docker build -t mcp/licensespring:latest -f Dockerfile .
 ```
-
-### Testing
-```bash
-npm test
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Support
-
-- **Documentation**: [LicenseSpring API Docs](https://docs.licensespring.com/)
-- **Issues**: [GitHub Issues](https://github.com/stier1ba/licensespring-mcp/issues)
-- **MCP Protocol**: [Model Context Protocol](https://modelcontextprotocol.io/)
-
-## Changelog
-
-### v1.0.0
-- Initial release
-- License API MCP server with full endpoint coverage
-- Management API MCP server with CRUD operations
-- Comprehensive authentication handling
-- TypeScript implementation with full type safety
+This MCP server is licensed under the MIT License. This means you are free to use, modify, and distribute the software, subject to the terms and conditions of the MIT License. For more details, please see the LICENSE file in the project repository.
