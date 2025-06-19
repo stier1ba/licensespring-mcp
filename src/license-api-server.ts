@@ -1,31 +1,11 @@
 #!/usr/bin/env node
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  Tool,
-} from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 import dotenv from 'dotenv';
 import { LicenseApiClient, handleApiError } from './utils/http.js';
 import { validateLicenseApiAuth } from './utils/auth.js';
-import {
-  ActivateLicenseRequest,
-  CheckLicenseRequest,
-  AddConsumptionRequest,
-  AddFeatureConsumptionRequest,
-  TrialKeyRequest,
-  ProductDetailsRequest,
-  TrackDeviceVariablesRequest,
-  GetDeviceVariablesRequest,
-  FloatingReleaseRequest,
-  FloatingBorrowRequest,
-  ChangePasswordRequest,
-  VersionsRequest,
-  InstallationFileRequest,
-  DeactivateLicenseRequest,
-} from './types/index.js';
 
 // Load environment variables
 dotenv.config();
@@ -40,475 +20,647 @@ validateLicenseApiAuth(LICENSE_API_KEY, LICENSE_SHARED_KEY);
 // Create HTTP client
 const apiClient = new LicenseApiClient(LICENSE_API_URL, LICENSE_API_KEY!, LICENSE_SHARED_KEY!);
 
-// Define tools
-const tools: Tool[] = [
-  {
-    name: 'activate_license',
-    description: 'Activate a license with hardware ID and product code',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key to activate' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-        quantity: { type: 'number', description: 'Optional quantity (default: 1)' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'check_license',
-    description: 'Check license status and validity',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key to check' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'deactivate_license',
-    description: 'Deactivate a license for a specific hardware ID',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key to deactivate' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'add_consumption',
-    description: 'Add consumption units to a license',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-        consumptions: { type: 'number', description: 'Number of consumption units to add' },
-        max_overages: { type: 'number', description: 'Maximum allowed overages' },
-        allow_overages: { type: 'boolean', description: 'Whether to allow overages' },
-      },
-      required: ['license_key', 'hardware_id', 'product', 'consumptions'],
-    },
-  },
-  {
-    name: 'add_feature_consumption',
-    description: 'Add consumption units to a specific feature',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-        feature: { type: 'string', description: 'Feature code' },
-        consumptions: { type: 'number', description: 'Number of consumption units to add' },
-      },
-      required: ['license_key', 'hardware_id', 'product', 'feature', 'consumptions'],
-    },
-  },
-  {
-    name: 'get_trial_key',
-    description: 'Generate a trial license key for a product',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'get_product_details',
-    description: 'Get detailed information about a product',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['product'],
-    },
-  },
-  {
-    name: 'track_device_variables',
-    description: 'Track custom variables for a device',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-        variables: { 
-          type: 'object', 
-          description: 'Key-value pairs of variables to track',
-          additionalProperties: { type: 'string' }
-        },
-      },
-      required: ['license_key', 'hardware_id', 'product', 'variables'],
-    },
-  },
-  {
-    name: 'get_device_variables',
-    description: 'Get tracked variables for a device',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'floating_release',
-    description: 'Release a floating license',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'floating_borrow',
-    description: 'Borrow a floating license for offline use',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-        borrowed_until: { type: 'string', description: 'ISO date string when borrow expires' },
-      },
-      required: ['license_key', 'hardware_id', 'product', 'borrowed_until'],
-    },
-  },
-  {
-    name: 'change_password',
-    description: 'Change password for a user-based license',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        username: { type: 'string', description: 'Username/email' },
-        password: { type: 'string', description: 'Current password' },
-        new_password: { type: 'string', description: 'New password' },
-      },
-      required: ['username', 'password', 'new_password'],
-    },
-  },
-  {
-    name: 'get_versions',
-    description: 'Get available software versions for a product',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'get_installation_file',
-    description: 'Get installation file download information',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        license_key: { type: 'string', description: 'The license key' },
-        hardware_id: { type: 'string', description: 'Unique hardware identifier' },
-        product: { type: 'string', description: 'Product code' },
-      },
-      required: ['license_key', 'hardware_id', 'product'],
-    },
-  },
-  {
-    name: 'get_sso_url',
-    description: 'Get Single Sign-On URL for customer portal access',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        product: { type: 'string', description: 'Product code' },
-        customer_account_code: { type: 'string', description: 'Customer account code' },
-        response_type: { type: 'string', description: 'Response type (default: token)' },
-      },
-      required: ['product', 'customer_account_code'],
-    },
-  },
-];
+// Create MCP server
+const server = new McpServer({
+  name: 'licensespring-license-api',
+  version: '2.0.0',
+});
 
-// Create server
-const server = new Server(
+// Resources - Expose LicenseSpring data
+server.registerResource(
+  'product-details',
+  new ResourceTemplate('licensespring://product/{product}/details', { list: undefined }),
   {
-    name: 'licensespring-license-api',
-    version: '1.0.0',
+    title: 'Product Details',
+    description: 'Detailed information about a specific product',
+    mimeType: 'application/json'
   },
-  {
-    capabilities: {
-      tools: {},
-    },
+  async (uri: any, extra: any) => {
+    try {
+      const { product } = extra;
+      const queryParams = new URLSearchParams({ product });
+      const response = await apiClient.get(`/api/v4/product_details?${queryParams}`);
+
+      return {
+        contents: [{
+          uri: uri.href,
+          text: JSON.stringify(response.data, null, 2),
+          mimeType: 'application/json'
+        }]
+      };
+    } catch (error) {
+      throw new Error(`Failed to get product details: ${handleApiError(error)}`);
+    }
   }
 );
 
-// Handle tool listing
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return { tools };
+server.registerResource(
+  'license-status',
+  new ResourceTemplate('licensespring://license/{license_key}/status', { list: undefined }),
+  {
+    title: 'License Status',
+    description: 'Current status and details of a specific license',
+    mimeType: 'application/json'
+  },
+  async (uri: any, extra: any) => {
+    try {
+      const { license_key } = extra;
+      // Note: This would need hardware_id and product in a real implementation
+      // For now, we'll return a placeholder that explains the requirement
+      return {
+        contents: [{
+          uri: uri.href,
+          text: JSON.stringify({
+            message: 'License status requires hardware_id and product parameters',
+            license_key,
+            note: 'Use the check_license tool with hardware_id and product for full status'
+          }, null, 2),
+          mimeType: 'application/json'
+        }]
+      };
+    } catch (error) {
+      throw new Error(`Failed to get license status: ${handleApiError(error)}`);
+    }
+  }
+);
+
+// Prompts - Workflow templates
+server.registerPrompt(
+  'license-troubleshooting',
+  {
+    title: 'License Troubleshooting',
+    description: 'Diagnose and resolve license issues',
+    argsSchema: {
+      license_key: z.string().min(1, 'License key is required'),
+      issue_description: z.string().min(1, 'Issue description is required'),
+      product: z.string().optional()
+    }
+  },
+  ({ license_key, issue_description, product }) => ({
+    messages: [{
+      role: 'user',
+      content: {
+        type: 'text',
+        text: `Please help troubleshoot this LicenseSpring license issue:
+
+License Key: ${license_key}
+${product ? `Product: ${product}` : ''}
+Issue Description: ${issue_description}
+
+Please:
+1. Check the license status and activation history
+2. Verify the license is enabled and not expired
+3. Check for any consumption limits or overages
+4. Suggest specific solutions based on the issue
+5. Provide next steps for resolution
+
+Use the available LicenseSpring tools to gather information and provide a comprehensive diagnosis.`
+      }
+    }]
+  })
+);
+
+server.registerPrompt(
+  'customer-onboarding',
+  {
+    title: 'Customer Onboarding',
+    description: 'Guide for setting up a new customer with licenses',
+    argsSchema: {
+      customer_email: z.string().email('Valid email is required'),
+      product_code: z.string().min(1, 'Product code is required'),
+      license_type: z.enum(['trial', 'full']).optional()
+    }
+  },
+  ({ customer_email, product_code, license_type = 'trial' }) => ({
+    messages: [{
+      role: 'user',
+      content: {
+        type: 'text',
+        text: `Please help onboard a new customer to LicenseSpring:
+
+Customer Email: ${customer_email}
+Product: ${product_code}
+License Type: ${license_type}
+
+Please follow this onboarding workflow:
+1. Create the customer record in the management system
+2. ${license_type === 'trial' ? 'Generate a trial license key' : 'Create a full license'}
+3. Provide activation instructions
+4. Set up any necessary product configurations
+5. Send welcome information to the customer
+
+Use the available LicenseSpring tools to complete each step and provide a summary of actions taken.`
+      }
+    }]
+  })
+);
+
+// License Operations Tools
+server.registerTool('activate_license', {
+  title: 'Activate License',
+  description: 'Activate a license with hardware ID and product code',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    quantity: z.number().optional().default(1),
+  },
+}, async ({ license_key, hardware_id, product, quantity }) => {
+  try {
+    const response = await apiClient.post('/api/v4/activate_license', {
+      license_key,
+      hardware_id,
+      product,
+      quantity,
+    });
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error activating license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
 });
 
-// Handle tool calls
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-
+server.registerTool('check_license', {
+  title: 'Check License',
+  description: 'Check license status and validity',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
   try {
-    switch (name) {
-      case 'activate_license': {
-        const params = args as unknown as ActivateLicenseRequest;
-        const response = await apiClient.post('/api/v4/activate_license', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'check_license': {
-        const params = args as unknown as CheckLicenseRequest;
-        const queryParams = new URLSearchParams({
-          license_key: params.license_key,
-          hardware_id: params.hardware_id,
-          product: params.product,
-        });
-        const response = await apiClient.get(`/api/v4/check_license?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'deactivate_license': {
-        const params = args as unknown as DeactivateLicenseRequest;
-        const response = await apiClient.post('/api/v4/deactivate_license', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'add_consumption': {
-        const params = args as unknown as AddConsumptionRequest;
-        const response = await apiClient.post('/api/v4/add_consumption', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'add_feature_consumption': {
-        const params = args as unknown as AddFeatureConsumptionRequest;
-        const response = await apiClient.post('/api/v4/add_feature_consumption', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_trial_key': {
-        const params = args as unknown as TrialKeyRequest;
-        const queryParams = new URLSearchParams({
-          hardware_id: params.hardware_id,
-          product: params.product,
-        });
-        const response = await apiClient.get(`/api/v4/trial_key?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_product_details': {
-        const params = args as unknown as ProductDetailsRequest;
-        const queryParams = new URLSearchParams({ product: params.product });
-        const response = await apiClient.get(`/api/v4/product_details?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'track_device_variables': {
-        const params = args as unknown as TrackDeviceVariablesRequest;
-        const response = await apiClient.post('/api/v4/track_device_variables', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_device_variables': {
-        const params = args as unknown as GetDeviceVariablesRequest;
-        const queryParams = new URLSearchParams({
-          license_key: params.license_key,
-          hardware_id: params.hardware_id,
-          product: params.product,
-        });
-        const response = await apiClient.get(`/api/v4/get_device_variables?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'floating_release': {
-        const params = args as unknown as FloatingReleaseRequest;
-        const response = await apiClient.post('/api/v4/floating/release', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'floating_borrow': {
-        const params = args as unknown as FloatingBorrowRequest;
-        const response = await apiClient.post('/api/v4/floating/borrow', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'change_password': {
-        const params = args as unknown as ChangePasswordRequest;
-        const response = await apiClient.post('/api/v4/change_password', params);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_versions': {
-        const params = args as unknown as VersionsRequest;
-        const queryParams = new URLSearchParams({
-          license_key: params.license_key,
-          hardware_id: params.hardware_id,
-          product: params.product,
-        });
-        const response = await apiClient.get(`/api/v4/versions?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_installation_file': {
-        const params = args as unknown as InstallationFileRequest;
-        const queryParams = new URLSearchParams({
-          license_key: params.license_key,
-          hardware_id: params.hardware_id,
-          product: params.product,
-        });
-        const response = await apiClient.get(`/api/v4/installation_file?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'get_sso_url': {
-        const params = args as unknown as { product: string; customer_account_code: string; response_type?: string };
-        const queryParams = new URLSearchParams({
-          product: params.product,
-          customer_account_code: params.customer_account_code,
-          response_type: params.response_type || 'token',
-        });
-        const response = await apiClient.get(`/api/v4/sso_url/?${queryParams}`);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(response.data, null, 2),
-            },
-          ],
-        };
-      }
-
-      default:
-        throw new Error(`Unknown tool: ${name}`);
-    }
-  } catch (error) {
-    const errorMessage = handleApiError(error);
+    const queryParams = new URLSearchParams({
+      license_key,
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/check_license?${queryParams}`);
+    
     return {
-      content: [
-        {
-          type: 'text',
-          text: `Error: ${errorMessage}`,
-        },
-      ],
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error checking license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('deactivate_license', {
+  title: 'Deactivate License',
+  description: 'Deactivate a license for a specific hardware ID',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const response = await apiClient.post('/api/v4/deactivate_license', {
+      license_key,
+      hardware_id,
+      product,
+    });
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error deactivating license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('add_consumption', {
+  title: 'Add Consumption',
+  description: 'Add consumption units to a license',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    consumptions: z.number().min(1, 'Consumption units must be positive'),
+    max_overages: z.number().optional(),
+    allow_overages: z.boolean().optional(),
+  },
+}, async ({ license_key, hardware_id, product, consumptions, max_overages, allow_overages }) => {
+  try {
+    const response = await apiClient.post('/api/v4/add_consumption', {
+      license_key,
+      hardware_id,
+      product,
+      consumptions,
+      max_overages,
+      allow_overages,
+    });
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error adding consumption: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('add_feature_consumption', {
+  title: 'Add Feature Consumption',
+  description: 'Add consumption units to a specific feature',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    feature: z.string().min(1, 'Feature code is required'),
+    consumptions: z.number().min(1, 'Consumption units must be positive'),
+  },
+}, async ({ license_key, hardware_id, product, feature, consumptions }) => {
+  try {
+    const response = await apiClient.post('/api/v4/add_feature_consumption', {
+      license_key,
+      hardware_id,
+      product,
+      feature,
+      consumptions,
+    });
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error adding feature consumption: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_trial_key', {
+  title: 'Get Trial Key',
+  description: 'Generate a trial license key for a product',
+  inputSchema: {
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ hardware_id, product }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/trial_key?${queryParams}`);
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error generating trial key: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_product_details', {
+  title: 'Get Product Details',
+  description: 'Get detailed information about a product',
+  inputSchema: {
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ product }) => {
+  try {
+    const queryParams = new URLSearchParams({ product });
+    const response = await apiClient.get(`/api/v4/product_details?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting product details: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('track_device_variables', {
+  title: 'Track Device Variables',
+  description: 'Track custom variables for a device',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    variables: z.record(z.string(), z.string()).refine(obj => Object.keys(obj).length > 0, 'At least one variable is required'),
+  },
+}, async ({ license_key, hardware_id, product, variables }) => {
+  try {
+    const response = await apiClient.post('/api/v4/track_device_variables', {
+      license_key,
+      hardware_id,
+      product,
+      variables,
+    });
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error tracking device variables: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_device_variables', {
+  title: 'Get Device Variables',
+  description: 'Get tracked variables for a device',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      license_key,
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/get_device_variables?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting device variables: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('floating_release', {
+  title: 'Release Floating License',
+  description: 'Release a floating license',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const response = await apiClient.post('/api/v4/floating/release', {
+      license_key,
+      hardware_id,
+      product,
+    });
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error releasing floating license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('floating_borrow', {
+  title: 'Borrow Floating License',
+  description: 'Borrow a floating license for offline use',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    borrowed_until: z.string().min(1, 'Borrow expiration date is required'),
+  },
+}, async ({ license_key, hardware_id, product, borrowed_until }) => {
+  try {
+    const response = await apiClient.post('/api/v4/floating/borrow', {
+      license_key,
+      hardware_id,
+      product,
+      borrowed_until,
+    });
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error borrowing floating license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('change_password', {
+  title: 'Change Password',
+  description: 'Change password for a user-based license',
+  inputSchema: {
+    username: z.string().min(1, 'Username is required'),
+    password: z.string().min(1, 'Current password is required'),
+    new_password: z.string().min(1, 'New password is required'),
+  },
+}, async ({ username, password, new_password }) => {
+  try {
+    const response = await apiClient.post('/api/v4/change_password', {
+      username,
+      password,
+      new_password,
+    });
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error changing password: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_versions', {
+  title: 'Get Software Versions',
+  description: 'Get available software versions for a product',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      license_key,
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/versions?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting versions: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_installation_file', {
+  title: 'Get Installation File',
+  description: 'Get installation file download information',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      license_key,
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/installation_file?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting installation file: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('get_sso_url', {
+  title: 'Get SSO URL',
+  description: 'Get Single Sign-On URL for customer portal access',
+  inputSchema: {
+    product: z.string().min(1, 'Product code is required'),
+    customer_account_code: z.string().min(1, 'Customer account code is required'),
+    response_type: z.string().optional().default('token'),
+  },
+}, async ({ product, customer_account_code, response_type }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      product,
+      customer_account_code,
+      response_type,
+    });
+    const response = await apiClient.get(`/api/v4/sso_url/?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting SSO URL: ${handleApiError(error)}`,
+      }],
       isError: true,
     };
   }
@@ -518,7 +670,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('LicenseSpring License API MCP server running on stdio');
+  console.error('LicenseSpring License API MCP server v2.0.0 running on stdio');
 }
 
 main().catch((error) => {
