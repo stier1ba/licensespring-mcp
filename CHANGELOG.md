@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.4] - 2025-06-19
+
+### Added
+- Automated release and versioning system
+- Enhanced MCP server functionality
+
+### Changed
+- Improved API coverage and feature parity
+
+### Fixed
+- Various bug fixes and improvements
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
