@@ -56,7 +56,8 @@ Add this to your `claude_desktop_config.json`:
       "command": "npx",
       "args": [
         "-y",
-        "@tfedorko/licensespring-mcp-server"
+        "@tfedorko/licensespring-mcp-server",
+        "license-api"
       ],
       "env": {
         "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
@@ -76,7 +77,7 @@ Add this to your `claude_desktop_config.json`:
       "args": [
         "-y",
         "@tfedorko/licensespring-mcp-server",
-        "licensespring-mcp-management"
+        "management-api"
       ],
       "env": {
         "MANAGEMENT_API_KEY": "YOUR_MANAGEMENT_API_KEY"
@@ -166,7 +167,7 @@ For manual installation, add the following JSON block to your User Settings (JSO
     "servers": {
       "licensespring": {
         "command": "npx",
-        "args": ["-y", "@tfedorko/licensespring-mcp-server"],
+        "args": ["-y", "@tfedorko/licensespring-mcp-server", "license-api"],
         "env": {
           "LICENSE_API_KEY": "${input:license_api_key}",
           "LICENSE_SHARED_KEY": "${input:license_shared_key}"
@@ -176,6 +177,33 @@ For manual installation, add the following JSON block to your User Settings (JSO
   }
 }
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+**Error: "npm error could not determine executable to run"**
+- **Solution**: Update to version 1.0.1 or later: `npx @tfedorko/licensespring-mcp-server@latest`
+- **Cause**: Fixed in v1.0.1 - improved binary configuration and startup process
+
+**Error: "LICENSE_API_KEY is required"**
+- **Solution**: Set your environment variables in `.env` file or Claude Desktop config
+- **Check**: Copy `.env.example` to `.env` and fill in your API credentials
+
+**Error: "Authentication failed"**
+- **Solution**: Verify your API keys in the LicenseSpring dashboard
+- **Note**: `LICENSE_SHARED_KEY` is optional for Basic/Standard subscription tiers
+
+**Server starts but API calls fail**
+- **Check**: Your LicenseSpring subscription tier and available API features
+- **Solution**: The server provides helpful guidance for subscription limitations
+
+### Getting Help
+
+1. Check the error messages - they provide specific guidance
+2. Verify your LicenseSpring subscription tier and API access
+3. Review the [Advanced Documentation](#advanced-documentation) below
+4. Open an issue on GitHub with error details
 
 ## Advanced Documentation
 
