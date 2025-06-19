@@ -186,6 +186,10 @@ For manual installation, add the following JSON block to your User Settings (JSO
 - **Solution**: Update to version 1.0.1 or later: `npx @tfedorko/licensespring-mcp-server@latest`
 - **Cause**: Fixed in v1.0.1 - improved binary configuration and startup process
 
+**Error: "MCP error -1: Connection closed"**
+- **Solution**: Update to version 1.0.2 or later: `npx @tfedorko/licensespring-mcp-server@latest`
+- **Cause**: Fixed in v1.0.2 - server now defaults to license-api mode for Claude Desktop compatibility
+
 **Error: "LICENSE_API_KEY is required"**
 - **Solution**: Set your environment variables in `.env` file or Claude Desktop config
 - **Check**: Copy `.env.example` to `.env` and fill in your API credentials
