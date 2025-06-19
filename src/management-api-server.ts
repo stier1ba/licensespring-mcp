@@ -466,6 +466,33 @@ server.registerTool('create_customer', {
   }
 });
 
+server.registerTool('delete_customer', {
+  title: 'Delete Customer',
+  description: 'Delete a customer',
+  inputSchema: {
+    id: z.number().min(1, 'Customer ID is required'),
+  },
+}, async ({ id }) => {
+  try {
+    await apiClient.delete(`/api/v1/customers/${id}/`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: `Customer ${id} deleted successfully`,
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error deleting customer: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
 // Start server
 async function main() {
   try {
