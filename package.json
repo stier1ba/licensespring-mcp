@@ -1,5 +1,5 @@
 {
-  "name": "@modelcontextprotocol/server-licensespring",
+  "name": "@tfedorko/licensespring-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for LicenseSpring API integration - License management and customer operations",
   "main": "dist/license-api-server.js",
@@ -19,8 +19,8 @@
     "prepare": "npm run build"
   },
   "bin": {
-    "mcp-server-licensespring": "./dist/license-api-server.js",
-    "mcp-server-licensespring-management": "./dist/management-api-server.js"
+    "licensespring-mcp-license": "./dist/license-api-server.js",
+    "licensespring-mcp-management": "./dist/management-api-server.js"
   },
   "files": [
     "dist/"

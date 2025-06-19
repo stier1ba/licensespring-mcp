@@ -56,7 +56,7 @@ Add this to your `claude_desktop_config.json`:
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-licensespring"
+        "@tfedorko/licensespring-mcp-server"
       ],
       "env": {
         "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
@@ -75,7 +75,8 @@ Add this to your `claude_desktop_config.json`:
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-licensespring"
+        "@tfedorko/licensespring-mcp-server",
+        "licensespring-mcp-management"
       ],
       "env": {
         "MANAGEMENT_API_KEY": "YOUR_MANAGEMENT_API_KEY"
@@ -99,7 +100,7 @@ Add this to your `claude_desktop_config.json`:
         "LICENSE_API_KEY",
         "-e",
         "LICENSE_SHARED_KEY",
-        "mcp/licensespring"
+        "stiertfedorko/licensespring-mcp:latest"
       ],
       "env": {
         "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
@@ -114,7 +115,7 @@ Add this to your `claude_desktop_config.json`:
         "--rm",
         "-e",
         "MANAGEMENT_API_KEY",
-        "mcp/licensespring-management"
+        "stiertfedorko/licensespring-mcp-management:latest"
       ],
       "env": {
         "MANAGEMENT_API_KEY": "YOUR_MANAGEMENT_API_KEY"
@@ -156,7 +157,7 @@ For manual installation, add the following JSON block to your User Settings (JSO
         "password": true
       },
       {
-        "type": "promptString", 
+        "type": "promptString",
         "id": "license_shared_key",
         "description": "LicenseSpring Shared Key (optional for Basic/Standard tiers)",
         "password": true
@@ -165,7 +166,7 @@ For manual installation, add the following JSON block to your User Settings (JSO
     "servers": {
       "licensespring": {
         "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-licensespring"],
+        "args": ["-y", "@tfedorko/licensespring-mcp-server"],
         "env": {
           "LICENSE_API_KEY": "${input:license_api_key}",
           "LICENSE_SHARED_KEY": "${input:license_shared_key}"
@@ -185,11 +186,28 @@ For comprehensive guides and advanced configuration:
 - **[Test Report](docs/TEST_REPORT.md)** - Comprehensive testing results and validation
 - **[Migration Guide](docs/MIGRATION_TO_OFFICIAL_PATTERN.md)** - Technical implementation details
 
+## Installation
+
+### NPM Package
+```bash
+npm install -g @tfedorko/licensespring-mcp-server
+```
+
+### Docker Images
+```bash
+# License API Server
+docker pull stiertfedorko/licensespring-mcp:latest
+
+# Management API Server
+docker pull stiertfedorko/licensespring-mcp-management:latest
+```
+
 ## Build
 
 Docker build:
 ```bash
-docker build -t mcp/licensespring:latest -f Dockerfile .
+docker build -t licensespring-mcp:latest -f Dockerfile .
+docker build -t licensespring-mcp-management:latest -f Dockerfile.management .
 ```
 
 ## License

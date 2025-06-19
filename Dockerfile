@@ -6,14 +6,11 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install dependencies
-RUN npm ci
-
 # Copy source code
 COPY src/ ./src/
 
-# Build the application
-RUN npm run build
+# Install dependencies and build
+RUN npm ci && npm run build
 
 # Make the binary executable
 RUN chmod +x dist/*.js
