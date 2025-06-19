@@ -28,7 +28,8 @@
     "release": "npm run test && npm run build && npm run version:patch && npm run publish:stable",
     "release:minor": "npm run test && npm run build && npm run version:minor && npm run publish:stable",
     "release:major": "npm run test && npm run build && npm run version:major && npm run publish:stable",
-    "verify:npm": "node scripts/verify-npm-setup.js"
+    "verify:npm": "node scripts/verify-npm-setup.js",
+    "diagnose:workflows": "node scripts/diagnose-workflows.js"
   },
   "bin": {
     "licensespring-mcp-server": "dist/index.js",

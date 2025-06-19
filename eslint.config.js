@@ -12,6 +12,22 @@ export default [
         ecmaVersion: 2022,
         sourceType: 'module',
       },
+      globals: {
+        // Node.js globals
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        // Browser/Web API globals
+        URLSearchParams: 'readonly',
+        URL: 'readonly',
+        fetch: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': tseslint,
@@ -25,6 +41,23 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/__tests__/**/*.ts'],
+    languageOptions: {
+      globals: {
+        // Jest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+      },
     },
   },
   {

@@ -10,7 +10,11 @@ export interface LicenseApiConfig extends LicenseSpringConfig {
   sharedKey: string;
 }
 
-export interface ManagementApiConfig extends LicenseSpringConfig {}
+export interface ManagementApiConfig {
+  apiKey: string;
+  baseUrl: string;
+  // Management API specific configuration
+}
 
 // License API Types
 export interface ActivateLicenseRequest {

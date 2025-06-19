@@ -55,7 +55,7 @@ function main() {
   const serverType = args[0] || 'license-api';
 
   switch (serverType) {
-    case 'license-api':
+    case 'license-api': {
       console.log('Starting LicenseSpring License API MCP server...');
       const licenseProcess = spawn('node', [join(__dirname, 'license-api-server.js')], {
         stdio: 'inherit',
@@ -74,8 +74,9 @@ function main() {
         }
       });
       break;
+    }
 
-    case 'management-api':
+    case 'management-api': {
       console.log('Starting LicenseSpring Management API MCP server...');
       const managementProcess = spawn('node', [join(__dirname, 'management-api-server.js')], {
         stdio: 'inherit',
@@ -94,6 +95,7 @@ function main() {
         }
       });
       break;
+    }
 
     default:
       console.error(`Unknown server type: ${serverType}`);
