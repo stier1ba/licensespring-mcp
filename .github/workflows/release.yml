@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x, 22.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -199,12 +199,12 @@ jobs:
           EOF
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          release_name: Release ${{ steps.version.outputs.new-version }}
+          name: Release ${{ steps.version.outputs.new-version }}
           body_path: release_notes.md
           draft: false
           prerelease: ${{ contains(steps.version.outputs.new-version, '-') }}
