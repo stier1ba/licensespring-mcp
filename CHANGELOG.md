@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.6](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.5...v1.1.6) (2025-06-19)
+
+
+### 📚 Documentation
+
+* add Node.js version requirement note to installation section ([a58ca79](https://github.com/stier1ba/licensespring-mcp/commit/a58ca792f155361c4ba6042e5606159c9955e875))
+
 ## [1.1.5](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.4...v1.1.5) (2025-06-19)
 
 
