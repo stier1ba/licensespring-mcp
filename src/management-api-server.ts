@@ -493,6 +493,271 @@ server.registerTool('delete_customer', {
   }
 });
 
+// License User Management Tools
+server.registerTool('list_license_users', {
+  title: 'List License Users',
+  description: 'List license users with optional filtering',
+  inputSchema: {
+    limit: z.number().min(1).max(1000).optional().default(100),
+    offset: z.number().min(0).optional().default(0),
+    license_id: z.number().min(1).optional(),
+    email: z.string().email().optional(),
+  },
+}, async ({ limit, offset, license_id, email }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+
+    if (license_id) {
+      queryParams.append('license_id', license_id.toString());
+    }
+    if (email) {
+      queryParams.append('email', email);
+    }
+
+    const response = await apiClient.get(`/api/v1/license-users/?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error listing license users: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('assign_user_to_license', {
+  title: 'Assign User to License',
+  description: 'Assign a user to a specific license',
+  inputSchema: {
+    license_id: z.number().min(1, 'License ID is required'),
+    email: z.string().email('Valid email is required'),
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+    phone_number: z.string().optional(),
+    is_manager: z.boolean().optional().default(false),
+    password: z.string().optional(),
+    max_activations: z.number().min(0).optional(),
+    total_activations: z.number().min(0).optional(),
+  },
+}, async ({ license_id, email, first_name, last_name, phone_number, is_manager, password, max_activations, total_activations }) => {
+  try {
+    const requestData: any = {
+      email,
+      is_manager,
+    };
+
+    if (first_name) requestData.first_name = first_name;
+    if (last_name) requestData.last_name = last_name;
+    if (phone_number) requestData.phone_number = phone_number;
+    if (password) requestData.password = password;
+    if (max_activations !== undefined) requestData.max_activations = max_activations;
+    if (total_activations !== undefined) requestData.total_activations = total_activations;
+
+    const response = await apiClient.post(`/api/v1/licenses/${license_id}/assign_user/`, requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error assigning user to license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('unassign_user_from_license', {
+  title: 'Unassign User from License',
+  description: 'Remove a user assignment from a specific license',
+  inputSchema: {
+    license_id: z.number().min(1, 'License ID is required'),
+    license_user_id: z.number().min(1, 'License user ID is required'),
+  },
+}, async ({ license_id, license_user_id }) => {
+  try {
+    const requestData = {
+      license_user_id,
+    };
+
+    const response = await apiClient.post(`/api/v1/licenses/${license_id}/unassign_user/`, requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error unassigning user from license: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('set_user_activations', {
+  title: 'Set User Activations',
+  description: 'Set activation limits for users on a specific license',
+  inputSchema: {
+    license_id: z.number().min(1, 'License ID is required'),
+    user_activations: z.record(z.string(), z.object({
+      max_activations: z.number().min(0).optional(),
+      reset_total_activations: z.boolean().optional(),
+    })).refine(obj => Object.keys(obj).length > 0, 'At least one user activation must be specified'),
+  },
+}, async ({ license_id, user_activations }) => {
+  try {
+    const requestData = {
+      user_activations,
+    };
+
+    const response = await apiClient.post(`/api/v1/licenses/${license_id}/set_users_activations/`, requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error setting user activations: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+// Bulk Operations Tools
+server.registerTool('bulk_update_licenses', {
+  title: 'Bulk Update Licenses',
+  description: 'Update multiple licenses in a single operation',
+  inputSchema: {
+    licenses: z.array(z.object({
+      id: z.number().min(1, 'License ID is required'),
+      is_trial: z.boolean().optional(),
+      enable_maintenance_period: z.boolean().optional(),
+      enabled: z.boolean().optional(),
+      note: z.string().optional(),
+      validity_period: z.number().min(0).optional(),
+    })).min(1, 'At least one license must be specified').max(100, 'Maximum 100 licenses can be updated at once'),
+  },
+}, async ({ licenses }) => {
+  try {
+    const requestData = {
+      licenses,
+    };
+
+    const response = await apiClient.post('/api/v1/licenses/bulk_update/', requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error bulk updating licenses: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('bulk_disable_licenses', {
+  title: 'Bulk Disable Licenses',
+  description: 'Disable multiple licenses in a single operation',
+  inputSchema: {
+    license_ids: z.array(z.number().min(1, 'License ID must be a positive number'))
+      .min(1, 'At least one license ID must be specified')
+      .max(100, 'Maximum 100 licenses can be disabled at once'),
+  },
+}, async ({ license_ids }) => {
+  try {
+    const requestData = {
+      license_ids,
+    };
+
+    const response = await apiClient.post('/api/v1/licenses/disable_bulk/', requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error bulk disabling licenses: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('import_licenses_from_csv', {
+  title: 'Import Licenses from CSV',
+  description: 'Import multiple licenses from a CSV file',
+  inputSchema: {
+    csv_file: z.string().min(1, 'CSV file content is required (base64 encoded or file path)'),
+    product_id: z.number().min(1).optional(),
+    customer_id: z.number().min(1).optional(),
+  },
+}, async ({ csv_file, product_id, customer_id }) => {
+  try {
+    const requestData: any = {
+      csv_file,
+    };
+
+    if (product_id) requestData.product_id = product_id;
+    if (customer_id) requestData.customer_id = customer_id;
+
+    const response = await apiClient.post('/api/v1/licenses/import_from_csv/', requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error importing licenses from CSV: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
 // Start server
 async function main() {
   try {

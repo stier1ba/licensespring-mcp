@@ -102,6 +102,25 @@ export interface DeactivateLicenseRequest {
   product: string;
 }
 
+export interface GetCustomerLicenseUsersRequest {
+  license_key: string;
+  hardware_id: string;
+  product: string;
+}
+
+export interface ActivateOfflineRequest {
+  license_key: string;
+  hardware_id: string;
+  product: string;
+  quantity?: number;
+}
+
+export interface DeactivateOfflineRequest {
+  license_key: string;
+  hardware_id: string;
+  product: string;
+}
+
 // Management API Types
 export interface ListLicensesRequest {
   limit?: number;
@@ -153,6 +172,61 @@ export interface UpdateCustomerRequest {
   company_name?: string;
   phone?: string;
   reference?: string;
+}
+
+// License User Management Types
+export interface ListLicenseUsersRequest {
+  limit?: number;
+  offset?: number;
+  license_id?: number;
+  email?: string;
+}
+
+export interface AssignUserToLicenseRequest {
+  license_id: number;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  is_manager?: boolean;
+  password?: string;
+  max_activations?: number;
+  total_activations?: number;
+}
+
+export interface UnassignUserFromLicenseRequest {
+  license_id: number;
+  license_user_id: number;
+}
+
+export interface SetUserActivationsRequest {
+  license_id: number;
+  user_activations: Record<string, {
+    max_activations?: number;
+    reset_total_activations?: boolean;
+  }>;
+}
+
+// Bulk Operations Types
+export interface BulkUpdateLicensesRequest {
+  licenses: Array<{
+    id: number;
+    is_trial?: boolean;
+    enable_maintenance_period?: boolean;
+    enabled?: boolean;
+    note?: string;
+    validity_period?: number;
+  }>;
+}
+
+export interface BulkDisableLicensesRequest {
+  license_ids: number[];
+}
+
+export interface ImportLicensesFromCsvRequest {
+  csv_file: string; // Base64 encoded CSV content or file path
+  product_id?: number;
+  customer_id?: number;
 }
 
 export interface ListProductsRequest {

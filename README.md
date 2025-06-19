@@ -209,10 +209,35 @@ For manual installation, add the following JSON block to your User Settings (JSO
 3. Review the [Advanced Documentation](#advanced-documentation) below
 4. Open an issue on GitHub with error details
 
+## Release Automation
+
+This project includes comprehensive automated release versioning and NPM distribution:
+
+### Quick Release Commands
+```bash
+npm run release          # Patch release (1.0.0 -> 1.0.1)
+npm run release:minor    # Minor release (1.0.0 -> 1.1.0)
+npm run release:major    # Major release (1.0.0 -> 2.0.0)
+```
+
+### Preview Changes
+```bash
+npm run version:dry      # Preview version bump
+npm run publish:dry      # Preview NPM publish
+```
+
+### Automated GitHub Releases
+- **Commit triggers**: Use `[release]` in commit messages
+- **Manual dispatch**: GitHub Actions workflow
+- **Semantic release**: Conventional commit messages
+
+For complete automation documentation, see **[Release Automation Guide](docs/RELEASE_AUTOMATION.md)**.
+
 ## Advanced Documentation
 
 For comprehensive guides and advanced configuration:
 
+- **[Release Automation Guide](docs/RELEASE_AUTOMATION.md)** - Complete automated release and distribution system
 - **[Subscription Tier Support](docs/SUBSCRIPTION_TIERS.md)** - Detailed guide for different LicenseSpring subscription tiers
 - **[Distribution Guide](docs/DISTRIBUTION_GUIDE.md)** - Complete setup and sharing instructions
 - **[Test Report](docs/TEST_REPORT.md)** - Comprehensive testing results and validation

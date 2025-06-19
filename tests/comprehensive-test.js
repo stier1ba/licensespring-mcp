@@ -261,7 +261,7 @@ class ComprehensiveMCPTester {
 
   createTestArguments(inputSchema, toolName) {
     const args = {};
-    
+
     if (inputSchema?.properties) {
       Object.entries(inputSchema.properties).forEach(([key, prop]) => {
         // Create realistic test data based on property names and types
@@ -275,6 +275,18 @@ class ComprehensiveMCPTester {
           args[key] = 'test-product-code';
         } else if (key.includes('customer')) {
           args[key] = key.includes('email') ? 'customer@example.com' : 'test-customer';
+        } else if (key === 'license_id' || key === 'id') {
+          args[key] = 1;
+        } else if (key === 'license_user_id') {
+          args[key] = 1;
+        } else if (key === 'license_ids') {
+          args[key] = [1, 2, 3];
+        } else if (key === 'licenses') {
+          args[key] = [{ id: 1, enabled: true, note: 'test license' }];
+        } else if (key === 'user_activations') {
+          args[key] = { 'user1': { max_activations: 5, reset_total_activations: false } };
+        } else if (key === 'csv_file') {
+          args[key] = 'dGVzdCBjc3YgZGF0YQ=='; // base64 encoded "test csv data"
         } else if (prop.type === 'string') {
           args[key] = `test-${key}`;
         } else if (prop.type === 'number') {
@@ -283,10 +295,12 @@ class ComprehensiveMCPTester {
           args[key] = true;
         } else if (prop.type === 'object') {
           args[key] = { test: 'value' };
+        } else if (prop.type === 'array') {
+          args[key] = ['test-item'];
         }
       });
     }
-    
+
     return args;
   }
 

@@ -1,0 +1,1576 @@
+{
+  "timestamp": "2025-06-19T18:18:11.056Z",
+  "summary": {
+    "totalServers": 2,
+    "totalTests": 18,
+    "totalPassed": 18,
+    "totalFailed": 0,
+    "totalTools": 33,
+    "totalResources": 3,
+    "totalPrompts": 4
+  },
+  "servers": [
+    {
+      "serverName": "License API Server",
+      "passed": 9,
+      "failed": 0,
+      "tools": [
+        {
+          "name": "activate_license",
+          "title": "Activate License",
+          "description": "Activate a license with hardware ID and product code",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "quantity": {
+                "type": "number",
+                "default": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "check_license",
+          "title": "Check License",
+          "description": "Check license status and validity",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "deactivate_license",
+          "title": "Deactivate License",
+          "description": "Deactivate a license for a specific hardware ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "add_consumption",
+          "title": "Add Consumption",
+          "description": "Add consumption units to a license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consumptions": {
+                "type": "number",
+                "minimum": 1
+              },
+              "max_overages": {
+                "type": "number"
+              },
+              "allow_overages": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product",
+              "consumptions"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "add_feature_consumption",
+          "title": "Add Feature Consumption",
+          "description": "Add consumption units to a specific feature",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "feature": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consumptions": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product",
+              "feature",
+              "consumptions"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_trial_key",
+          "title": "Get Trial Key",
+          "description": "Generate a trial license key for a product",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_product_details",
+          "title": "Get Product Details",
+          "description": "Get detailed information about a product",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "track_device_variables",
+          "title": "Track Device Variables",
+          "description": "Track custom variables for a device",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "variables": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product",
+              "variables"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_device_variables",
+          "title": "Get Device Variables",
+          "description": "Get tracked variables for a device",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "floating_release",
+          "title": "Release Floating License",
+          "description": "Release a floating license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "floating_borrow",
+          "title": "Borrow Floating License",
+          "description": "Borrow a floating license for offline use",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borrowed_until": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product",
+              "borrowed_until"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "change_password",
+          "title": "Change Password",
+          "description": "Change password for a user-based license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "minLength": 1
+              },
+              "password": {
+                "type": "string",
+                "minLength": 1
+              },
+              "new_password": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "username",
+              "password",
+              "new_password"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_versions",
+          "title": "Get Software Versions",
+          "description": "Get available software versions for a product",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_installation_file",
+          "title": "Get Installation File",
+          "description": "Get installation file download information",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_sso_url",
+          "title": "Get SSO URL",
+          "description": "Get Single Sign-On URL for customer portal access",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "customer_account_code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "response_type": {
+                "type": "string",
+                "default": "token"
+              }
+            },
+            "required": [
+              "product",
+              "customer_account_code"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_customer_license_users",
+          "title": "Get Customer License Users",
+          "description": "Get customer license users for a specific license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "activate_offline",
+          "title": "Activate License Offline",
+          "description": "Activate a license for offline use with hardware ID and product code",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              },
+              "quantity": {
+                "type": "number",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "deactivate_offline",
+          "title": "Deactivate License Offline",
+          "description": "Deactivate a license for offline use with hardware ID and product code",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hardware_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "license_key",
+              "hardware_id",
+              "product"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      ],
+      "resources": [],
+      "prompts": [
+        {
+          "name": "license-troubleshooting",
+          "title": "License Troubleshooting",
+          "description": "Diagnose and resolve license issues",
+          "arguments": [
+            {
+              "name": "license_key",
+              "required": true
+            },
+            {
+              "name": "issue_description",
+              "required": true
+            },
+            {
+              "name": "product",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "customer-onboarding",
+          "title": "Customer Onboarding",
+          "description": "Guide for setting up a new customer with licenses",
+          "arguments": [
+            {
+              "name": "customer_email",
+              "required": true
+            },
+            {
+              "name": "product_code",
+              "required": true
+            },
+            {
+              "name": "license_type",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "toolTests": [
+        {
+          "toolName": "activate_license",
+          "arguments": {
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "hardware_id": "test-hardware-id-67890",
+            "product": "test-product-code",
+            "quantity": 1
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error activating license: Authentication failed: Signature mismatch.. This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. Contact LicenseSpring support to upgrade your plan for full API access."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "check_license",
+          "arguments": {
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "hardware_id": "test-hardware-id-67890",
+            "product": "test-product-code"
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error checking license: Authentication failed: Signature mismatch.. This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. Contact LicenseSpring support to upgrade your plan for full API access."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "deactivate_license",
+          "arguments": {
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "hardware_id": "test-hardware-id-67890",
+            "product": "test-product-code"
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error deactivating license: Authentication failed: Signature mismatch.. This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. Contact LicenseSpring support to upgrade your plan for full API access."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "add_consumption",
+          "arguments": {
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "hardware_id": "test-hardware-id-67890",
+            "product": "test-product-code",
+            "consumptions": 1,
+            "max_overages": 1,
+            "allow_overages": true
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error adding consumption: Authentication failed: Signature mismatch.. This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. Contact LicenseSpring support to upgrade your plan for full API access."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "add_feature_consumption",
+          "arguments": {
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "hardware_id": "test-hardware-id-67890",
+            "product": "test-product-code",
+            "feature": "test-feature",
+            "consumptions": 1
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error adding feature consumption: Authentication failed: Signature mismatch.. This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. Contact LicenseSpring support to upgrade your plan for full API access."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        }
+      ]
+    },
+    {
+      "serverName": "Management API Server",
+      "passed": 9,
+      "failed": 0,
+      "tools": [
+        {
+          "name": "list_licenses",
+          "title": "List Licenses",
+          "description": "List licenses with optional filtering",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "default": 100
+              },
+              "offset": {
+                "type": "number",
+                "default": 0
+              },
+              "order_by": {
+                "type": "string"
+              },
+              "license_key": {
+                "type": "string"
+              },
+              "customer_email": {
+                "type": "string"
+              },
+              "product_id": {
+                "type": "number"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "create_license",
+          "title": "Create License",
+          "description": "Create a new license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "number",
+                "minimum": 1
+              },
+              "customer": {
+                "type": "number",
+                "minimum": 1
+              },
+              "license_key": {
+                "type": "string"
+              },
+              "validity_period": {
+                "type": "number"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product",
+              "customer"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "update_license",
+          "title": "Update License",
+          "description": "Update an existing license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              },
+              "validity_period": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_license",
+          "title": "Get License",
+          "description": "Get details of a specific license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "delete_license",
+          "title": "Delete License",
+          "description": "Delete a license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_customers",
+          "title": "List Customers",
+          "description": "List customers with optional filtering",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "default": 100
+              },
+              "offset": {
+                "type": "number",
+                "default": 0
+              },
+              "email": {
+                "type": "string"
+              },
+              "company_name": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "create_customer",
+          "title": "Create Customer",
+          "description": "Create a new customer",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "company_name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "reference": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "delete_customer",
+          "title": "Delete Customer",
+          "description": "Delete a customer",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_license_users",
+          "title": "List License Users",
+          "description": "List license users with optional filtering",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 100
+              },
+              "offset": {
+                "type": "number",
+                "minimum": 0,
+                "default": 0
+              },
+              "license_id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "assign_user_to_license",
+          "title": "Assign User to License",
+          "description": "Assign a user to a specific license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "phone_number": {
+                "type": "string"
+              },
+              "is_manager": {
+                "type": "boolean",
+                "default": false
+              },
+              "password": {
+                "type": "string"
+              },
+              "max_activations": {
+                "type": "number",
+                "minimum": 0
+              },
+              "total_activations": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "license_id",
+              "email"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "unassign_user_from_license",
+          "title": "Unassign User from License",
+          "description": "Remove a user assignment from a specific license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "license_user_id": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "license_id",
+              "license_user_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "set_user_activations",
+          "title": "Set User Activations",
+          "description": "Set activation limits for users on a specific license",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "user_activations": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "max_activations": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "reset_total_activations": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "license_id",
+              "user_activations"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "bulk_update_licenses",
+          "title": "Bulk Update Licenses",
+          "description": "Update multiple licenses in a single operation",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "licenses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "minimum": 1
+                    },
+                    "is_trial": {
+                      "type": "boolean"
+                    },
+                    "enable_maintenance_period": {
+                      "type": "boolean"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "validity_period": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 100
+              }
+            },
+            "required": [
+              "licenses"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "bulk_disable_licenses",
+          "title": "Bulk Disable Licenses",
+          "description": "Disable multiple licenses in a single operation",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "license_ids": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 1
+                },
+                "minItems": 1,
+                "maxItems": 100
+              }
+            },
+            "required": [
+              "license_ids"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "import_licenses_from_csv",
+          "title": "Import Licenses from CSV",
+          "description": "Import multiple licenses from a CSV file",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "csv_file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "product_id": {
+                "type": "number",
+                "minimum": 1
+              },
+              "customer_id": {
+                "type": "number",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "csv_file"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      ],
+      "resources": [
+        {
+          "uri": "licensespring://management/licenses",
+          "name": "licenses-list",
+          "title": "Licenses List",
+          "description": "List of all licenses in the system",
+          "mimeType": "application/json"
+        },
+        {
+          "uri": "licensespring://management/customers",
+          "name": "customers-list",
+          "title": "Customers List",
+          "description": "List of all customers in the system",
+          "mimeType": "application/json"
+        },
+        {
+          "uri": "licensespring://management/products",
+          "name": "products-list",
+          "title": "Products List",
+          "description": "List of all products in the system",
+          "mimeType": "application/json"
+        }
+      ],
+      "prompts": [
+        {
+          "name": "license-management-workflow",
+          "title": "License Management Workflow",
+          "description": "Complete workflow for managing licenses",
+          "arguments": [
+            {
+              "name": "action",
+              "required": true
+            },
+            {
+              "name": "customer_email",
+              "required": false
+            },
+            {
+              "name": "product_id",
+              "required": false
+            },
+            {
+              "name": "notes",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "customer-analysis",
+          "title": "Customer Analysis",
+          "description": "Analyze customer usage and license patterns",
+          "arguments": [
+            {
+              "name": "customer_id",
+              "required": false
+            },
+            {
+              "name": "customer_email",
+              "required": false
+            },
+            {
+              "name": "analysis_type",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "toolTests": [
+        {
+          "toolName": "list_licenses",
+          "arguments": {
+            "limit": 1,
+            "offset": 1,
+            "order_by": "test-order_by",
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "customer_email": "test@example.com",
+            "product_id": "test-product-code",
+            "enabled": true
+          },
+          "success": false,
+          "response": null,
+          "error": {
+            "code": -32602,
+            "message": "MCP error -32602: Invalid arguments for tool list_licenses: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"number\",\n    \"received\": \"string\",\n    \"path\": [\n      \"product_id\"\n    ],\n    \"message\": \"Expected number, received string\"\n  }\n]"
+          }
+        },
+        {
+          "toolName": "create_license",
+          "arguments": {
+            "product": "test-product-code",
+            "customer": "test-customer",
+            "license_key": "TEST-LICENSE-KEY-12345",
+            "validity_period": 1,
+            "enabled": true,
+            "note": "test-note"
+          },
+          "success": false,
+          "response": null,
+          "error": {
+            "code": -32602,
+            "message": "MCP error -32602: Invalid arguments for tool create_license: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"number\",\n    \"received\": \"string\",\n    \"path\": [\n      \"product\"\n    ],\n    \"message\": \"Expected number, received string\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"number\",\n    \"received\": \"string\",\n    \"path\": [\n      \"customer\"\n    ],\n    \"message\": \"Expected number, received string\"\n  }\n]"
+          }
+        },
+        {
+          "toolName": "update_license",
+          "arguments": {
+            "id": 1,
+            "enabled": true,
+            "note": "test-note",
+            "validity_period": 1
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error updating license: Not found."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "get_license",
+          "arguments": {
+            "id": 1
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error getting license: Not found."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        },
+        {
+          "toolName": "delete_license",
+          "arguments": {
+            "id": 1
+          },
+          "success": true,
+          "response": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error deleting license: Not found."
+              }
+            ],
+            "isError": true
+          },
+          "error": null
+        }
+      ]
+    }
+  ],
+  "logs": [
+    {
+      "timestamp": "18:18:08",
+      "type": "info",
+      "message": "\n=== Testing License API Server ===",
+      "testId": 0
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "success",
+      "message": "License API Server started successfully",
+      "testId": 0
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "test",
+      "message": "Test 1: Initialize server",
+      "testId": 1
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "success",
+      "message": "✅ Initialize: SUCCESS",
+      "testId": 1
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "test",
+      "message": "Test 2: List tools",
+      "testId": 2
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "success",
+      "message": "✅ List tools: SUCCESS (18 tools)",
+      "testId": 2
+    },
+    {
+      "timestamp": "18:18:08",
+      "type": "test",
+      "message": "Test 3: Call tool 'activate_license'",
+      "testId": 3
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'activate_license': SUCCESS (expected API error)",
+      "testId": 3
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 4: Call tool 'check_license'",
+      "testId": 4
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'check_license': SUCCESS (expected API error)",
+      "testId": 4
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 5: Call tool 'deactivate_license'",
+      "testId": 5
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'deactivate_license': SUCCESS (expected API error)",
+      "testId": 5
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 6: Call tool 'add_consumption'",
+      "testId": 6
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'add_consumption': SUCCESS (expected API error)",
+      "testId": 6
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 7: Call tool 'add_feature_consumption'",
+      "testId": 7
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'add_feature_consumption': SUCCESS (expected API error)",
+      "testId": 7
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 8: List resources",
+      "testId": 8
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ List resources: SUCCESS (0 resources)",
+      "testId": 8
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 9: List prompts",
+      "testId": 9
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ List prompts: SUCCESS (2 prompts)",
+      "testId": 9
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "info",
+      "message": "\n=== Testing Management API Server ===",
+      "testId": 9
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "Management API Server started successfully",
+      "testId": 9
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 10: Initialize server",
+      "testId": 10
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Initialize: SUCCESS",
+      "testId": 10
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 11: List tools",
+      "testId": 11
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ List tools: SUCCESS (15 tools)",
+      "testId": 11
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 12: Call tool 'list_licenses'",
+      "testId": 12
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'list_licenses': SUCCESS (got error response)",
+      "testId": 12
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 13: Call tool 'create_license'",
+      "testId": 13
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "success",
+      "message": "✅ Tool 'create_license': SUCCESS (got error response)",
+      "testId": 13
+    },
+    {
+      "timestamp": "18:18:09",
+      "type": "test",
+      "message": "Test 14: Call tool 'update_license'",
+      "testId": 14
+    },
+    {
+      "timestamp": "18:18:10",
+      "type": "success",
+      "message": "✅ Tool 'update_license': SUCCESS (expected API error)",
+      "testId": 14
+    },
+    {
+      "timestamp": "18:18:10",
+      "type": "test",
+      "message": "Test 15: Call tool 'get_license'",
+      "testId": 15
+    },
+    {
+      "timestamp": "18:18:10",
+      "type": "success",
+      "message": "✅ Tool 'get_license': SUCCESS (expected API error)",
+      "testId": 15
+    },
+    {
+      "timestamp": "18:18:10",
+      "type": "test",
+      "message": "Test 16: Call tool 'delete_license'",
+      "testId": 16
+    },
+    {
+      "timestamp": "18:18:11",
+      "type": "success",
+      "message": "✅ Tool 'delete_license': SUCCESS (expected API error)",
+      "testId": 16
+    },
+    {
+      "timestamp": "18:18:11",
+      "type": "test",
+      "message": "Test 17: List resources",
+      "testId": 17
+    },
+    {
+      "timestamp": "18:18:11",
+      "type": "success",
+      "message": "✅ List resources: SUCCESS (3 resources)",
+      "testId": 17
+    },
+    {
+      "timestamp": "18:18:11",
+      "type": "test",
+      "message": "Test 18: List prompts",
+      "testId": 18
+    },
+    {
+      "timestamp": "18:18:11",
+      "type": "success",
+      "message": "✅ List prompts: SUCCESS (2 prompts)",
+      "testId": 18
+    }
+  ]
+}

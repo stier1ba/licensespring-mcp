@@ -95,10 +95,10 @@ describe('Auth Utils', () => {
       }).toThrow('LICENSE_API_KEY is required');
     });
 
-    it('should throw for missing shared key', () => {
+    it('should not throw for missing shared key (graceful degradation)', () => {
       expect(() => {
         validateLicenseApiAuth('api-key', undefined);
-      }).toThrow('LICENSE_SHARED_KEY is required');
+      }).not.toThrow();
     });
   });
 

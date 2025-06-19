@@ -679,6 +679,110 @@ server.registerTool('get_sso_url', {
   }
 });
 
+server.registerTool('get_customer_license_users', {
+  title: 'Get Customer License Users',
+  description: 'Get customer license users for a specific license',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const queryParams = new URLSearchParams({
+      license_key,
+      hardware_id,
+      product,
+    });
+    const response = await apiClient.get(`/api/v4/customer_license_users?${queryParams}`);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error getting customer license users: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('activate_offline', {
+  title: 'Activate License Offline',
+  description: 'Activate a license for offline use with hardware ID and product code',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+    quantity: z.number().min(1).optional().default(1),
+  },
+}, async ({ license_key, hardware_id, product, quantity }) => {
+  try {
+    const requestData = {
+      license_key,
+      hardware_id,
+      product,
+      quantity,
+    };
+    const response = await apiClient.post('/api/v4/activate_offline', requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error activating license offline: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
+server.registerTool('deactivate_offline', {
+  title: 'Deactivate License Offline',
+  description: 'Deactivate a license for offline use with hardware ID and product code',
+  inputSchema: {
+    license_key: z.string().min(1, 'License key is required'),
+    hardware_id: z.string().min(1, 'Hardware ID is required'),
+    product: z.string().min(1, 'Product code is required'),
+  },
+}, async ({ license_key, hardware_id, product }) => {
+  try {
+    const requestData = {
+      license_key,
+      hardware_id,
+      product,
+    };
+    const response = await apiClient.post('/api/v4/deactivate_offline', requestData);
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(response.data, null, 2),
+      }],
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error deactivating license offline: ${handleApiError(error)}`,
+      }],
+      isError: true,
+    };
+  }
+});
+
 // Start server
 async function main() {
   try {

@@ -1,6 +1,6 @@
 {
   "name": "@tfedorko/licensespring-mcp-server",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "description": "MCP server for LicenseSpring API integration - License management and customer operations",
   "main": "dist/license-api-server.js",
   "type": "module",
@@ -16,7 +16,19 @@
     "install-claude": "node install-for-claude.js install",
     "uninstall-claude": "node install-for-claude.js uninstall",
     "prepublishOnly": "npm run build",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "version:patch": "node scripts/version.js patch",
+    "version:minor": "node scripts/version.js minor",
+    "version:major": "node scripts/version.js major",
+    "version:prerelease": "node scripts/version.js prerelease",
+    "version:dry": "node scripts/version.js patch --dry-run",
+    "publish:stable": "node scripts/publish.js",
+    "publish:beta": "node scripts/publish.js --beta",
+    "publish:dry": "node scripts/publish.js --dry-run",
+    "release": "npm run test && npm run build && npm run version:patch && npm run publish:stable",
+    "release:minor": "npm run test && npm run build && npm run version:minor && npm run publish:stable",
+    "release:major": "npm run test && npm run build && npm run version:major && npm run publish:stable",
+    "verify:npm": "node scripts/verify-npm-setup.js"
   },
   "bin": {
     "licensespring-mcp-server": "dist/index.js",

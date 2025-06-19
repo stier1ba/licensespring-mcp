@@ -1,0 +1,95 @@
+name: Semantic Release
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run comprehensive tests
+        run: node tests/comprehensive-test.js
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install semantic-release dependencies
+        run: |
+          npm install -D @semantic-release/changelog@^6.0.0
+          npm install -D @semantic-release/git@^10.0.0
+          npm install -D @semantic-release/github@^9.0.0
+          npm install -D @semantic-release/npm@^11.0.0
+          npm install -D @semantic-release/commit-analyzer@^11.0.0
+          npm install -D @semantic-release/release-notes-generator@^12.0.0
+          npm install -D semantic-release@^22.0.0
+          npm install -D conventional-changelog-conventionalcommits@^7.0.0
+
+      - name: Build project
+        run: npm run build
+
+      - name: Create NPM package
+        run: npm pack
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+      - name: Update distribution documentation
+        if: success()
+        run: |
+          echo "📦 Package distribution updated successfully!"
+          echo "🔗 Check NPM: https://www.npmjs.com/package/@tfedorko/licensespring-mcp-server"
+          echo "📋 Latest version available via: npm install @tfedorko/licensespring-mcp-server"
