@@ -2,7 +2,7 @@ name: Release and Publish
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       release_type:
@@ -168,7 +168,7 @@ jobs:
 
       - name: Push changes
         run: |
-          git push origin main
+          git push origin ${{ github.ref_name }}
           git push origin ${{ steps.version.outputs.tag }}
 
       - name: Generate release notes

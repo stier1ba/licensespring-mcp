@@ -2,7 +2,7 @@ name: Semantic Release
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master, develop ]
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     permissions:
       contents: write
       issues: write
