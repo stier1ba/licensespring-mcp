@@ -273,7 +273,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'activate_license': {
-        const params = args as ActivateLicenseRequest;
+        const params = args as unknown as ActivateLicenseRequest;
         const response = await apiClient.post('/api/v4/activate_license', params);
         return {
           content: [
@@ -286,7 +286,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'check_license': {
-        const params = args as CheckLicenseRequest;
+        const params = args as unknown as CheckLicenseRequest;
         const queryParams = new URLSearchParams({
           license_key: params.license_key,
           hardware_id: params.hardware_id,
@@ -304,7 +304,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'deactivate_license': {
-        const params = args as DeactivateLicenseRequest;
+        const params = args as unknown as DeactivateLicenseRequest;
         const response = await apiClient.post('/api/v4/deactivate_license', params);
         return {
           content: [
@@ -317,7 +317,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'add_consumption': {
-        const params = args as AddConsumptionRequest;
+        const params = args as unknown as AddConsumptionRequest;
         const response = await apiClient.post('/api/v4/add_consumption', params);
         return {
           content: [
@@ -330,7 +330,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'add_feature_consumption': {
-        const params = args as AddFeatureConsumptionRequest;
+        const params = args as unknown as AddFeatureConsumptionRequest;
         const response = await apiClient.post('/api/v4/add_feature_consumption', params);
         return {
           content: [
@@ -343,7 +343,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_trial_key': {
-        const params = args as TrialKeyRequest;
+        const params = args as unknown as TrialKeyRequest;
         const queryParams = new URLSearchParams({
           hardware_id: params.hardware_id,
           product: params.product,
@@ -360,7 +360,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_product_details': {
-        const params = args as ProductDetailsRequest;
+        const params = args as unknown as ProductDetailsRequest;
         const queryParams = new URLSearchParams({ product: params.product });
         const response = await apiClient.get(`/api/v4/product_details?${queryParams}`);
         return {
@@ -374,7 +374,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'track_device_variables': {
-        const params = args as TrackDeviceVariablesRequest;
+        const params = args as unknown as TrackDeviceVariablesRequest;
         const response = await apiClient.post('/api/v4/track_device_variables', params);
         return {
           content: [
@@ -387,7 +387,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_device_variables': {
-        const params = args as GetDeviceVariablesRequest;
+        const params = args as unknown as GetDeviceVariablesRequest;
         const queryParams = new URLSearchParams({
           license_key: params.license_key,
           hardware_id: params.hardware_id,
@@ -405,7 +405,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'floating_release': {
-        const params = args as FloatingReleaseRequest;
+        const params = args as unknown as FloatingReleaseRequest;
         const response = await apiClient.post('/api/v4/floating/release', params);
         return {
           content: [
@@ -418,7 +418,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'floating_borrow': {
-        const params = args as FloatingBorrowRequest;
+        const params = args as unknown as FloatingBorrowRequest;
         const response = await apiClient.post('/api/v4/floating/borrow', params);
         return {
           content: [
@@ -431,7 +431,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'change_password': {
-        const params = args as ChangePasswordRequest;
+        const params = args as unknown as ChangePasswordRequest;
         const response = await apiClient.post('/api/v4/change_password', params);
         return {
           content: [
@@ -444,7 +444,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_versions': {
-        const params = args as VersionsRequest;
+        const params = args as unknown as VersionsRequest;
         const queryParams = new URLSearchParams({
           license_key: params.license_key,
           hardware_id: params.hardware_id,
@@ -462,7 +462,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_installation_file': {
-        const params = args as InstallationFileRequest;
+        const params = args as unknown as InstallationFileRequest;
         const queryParams = new URLSearchParams({
           license_key: params.license_key,
           hardware_id: params.hardware_id,
@@ -480,7 +480,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_sso_url': {
-        const params = args as { product: string; customer_account_code: string; response_type?: string };
+        const params = args as unknown as { product: string; customer_account_code: string; response_type?: string };
         const queryParams = new URLSearchParams({
           product: params.product,
           customer_account_code: params.customer_account_code,

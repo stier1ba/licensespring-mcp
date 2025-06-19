@@ -1,10 +1,10 @@
-import { 
-  generateLicenseApiSignature, 
+import {
+  generateLicenseApiSignature,
   generateLicenseApiAuthHeader,
   generateManagementApiAuthHeader,
   validateLicenseApiAuth,
-  validateManagementApiAuth 
-} from '../auth.js';
+  validateManagementApiAuth
+} from '../auth';
 
 describe('Auth Utils', () => {
   describe('generateLicenseApiSignature', () => {

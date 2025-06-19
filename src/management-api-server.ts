@@ -268,9 +268,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       // License Management
       case 'list_licenses': {
-        const params = args as ListLicensesRequest;
+        const params = args as unknown as ListLicensesRequest;
         const queryParams = new URLSearchParams();
-        
+
         if (params.limit) queryParams.append('limit', params.limit.toString());
         if (params.offset) queryParams.append('offset', params.offset.toString());
         if (params.order_by) queryParams.append('order_by', params.order_by);
@@ -278,7 +278,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (params.customer_email) queryParams.append('customer_email', params.customer_email);
         if (params.product_id) queryParams.append('product_id', params.product_id.toString());
         if (params.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
-        
+
         const response = await apiClient.get(`/api/v1/licenses/?${queryParams}`);
         return {
           content: [
@@ -291,7 +291,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'create_license': {
-        const params = args as CreateLicenseRequest;
+        const params = args as unknown as CreateLicenseRequest;
         const response = await apiClient.post('/api/v1/licenses/', params);
         return {
           content: [
@@ -304,7 +304,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'update_license': {
-        const { id, ...updateData } = args as UpdateLicenseRequest;
+        const { id, ...updateData } = args as unknown as UpdateLicenseRequest;
         const response = await apiClient.patch(`/api/v1/licenses/${id}/`, updateData);
         return {
           content: [
@@ -317,7 +317,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_license': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         const response = await apiClient.get(`/api/v1/licenses/${id}/`);
         return {
           content: [
@@ -330,7 +330,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'delete_license': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         await apiClient.delete(`/api/v1/licenses/${id}/`);
         return {
           content: [
@@ -344,14 +344,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // Customer Management
       case 'list_customers': {
-        const params = args as ListCustomersRequest;
+        const params = args as unknown as ListCustomersRequest;
         const queryParams = new URLSearchParams();
-        
+
         if (params.limit) queryParams.append('limit', params.limit.toString());
         if (params.offset) queryParams.append('offset', params.offset.toString());
         if (params.email) queryParams.append('email', params.email);
         if (params.company_name) queryParams.append('company_name', params.company_name);
-        
+
         const response = await apiClient.get(`/api/v1/customers/?${queryParams}`);
         return {
           content: [
@@ -364,7 +364,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'create_customer': {
-        const params = args as CreateCustomerRequest;
+        const params = args as unknown as CreateCustomerRequest;
         const response = await apiClient.post('/api/v1/customers/', params);
         return {
           content: [
@@ -377,7 +377,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'update_customer': {
-        const { id, ...updateData } = args as UpdateCustomerRequest;
+        const { id, ...updateData } = args as unknown as UpdateCustomerRequest;
         const response = await apiClient.patch(`/api/v1/customers/${id}/`, updateData);
         return {
           content: [
@@ -390,7 +390,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_customer': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         const response = await apiClient.get(`/api/v1/customers/${id}/`);
         return {
           content: [
@@ -403,7 +403,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'delete_customer': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         await apiClient.delete(`/api/v1/customers/${id}/`);
         return {
           content: [
@@ -415,15 +415,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      // Product Management  
+      // Product Management
       case 'list_products': {
-        const params = args as ListProductsRequest;
+        const params = args as unknown as ListProductsRequest;
         const queryParams = new URLSearchParams();
-        
+
         if (params.limit) queryParams.append('limit', params.limit.toString());
         if (params.offset) queryParams.append('offset', params.offset.toString());
         if (params.name) queryParams.append('name', params.name);
-        
+
         const response = await apiClient.get(`/api/v1/products/?${queryParams}`);
         return {
           content: [
@@ -436,7 +436,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'create_product': {
-        const params = args as CreateProductRequest;
+        const params = args as unknown as CreateProductRequest;
         const response = await apiClient.post('/api/v1/products/', params);
         return {
           content: [
@@ -449,7 +449,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'update_product': {
-        const { id, ...updateData } = args as UpdateProductRequest;
+        const { id, ...updateData } = args as unknown as UpdateProductRequest;
         const response = await apiClient.patch(`/api/v1/products/${id}/`, updateData);
         return {
           content: [
@@ -462,7 +462,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_product': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         const response = await apiClient.get(`/api/v1/products/${id}/`);
         return {
           content: [
@@ -475,7 +475,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'delete_product': {
-        const { id } = args as { id: number };
+        const { id } = args as unknown as { id: number };
         await apiClient.delete(`/api/v1/products/${id}/`);
         return {
           content: [
