@@ -1,5 +1,21 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+## [1.1.5](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.4...v1.1.5) (2025-06-19)
+
+
+### 🐛 Bug Fixes
+
+* remove conflicting Release and Publish workflow file ([08795f2](https://github.com/stier1ba/licensespring-mcp/commit/08795f21c80b8b068acb54a8130460c75eff73b0))
+
+
+### 👷 CI/CD
+
+* disable conflicting Release and Publish workflow ([c4875d0](https://github.com/stier1ba/licensespring-mcp/commit/c4875d05d3f1a6986559fb90c3bc5343a20b18f6))
+
+# Changelog
+
 ## [1.1.4] - 2025-06-19
 
 ### Added
