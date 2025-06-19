@@ -45,12 +45,14 @@ For more information, see README.md
 function main() {
   const args = process.argv.slice(2);
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+  // Show help only when explicitly requested
+  if (args[0] === '--help' || args[0] === '-h') {
     showUsage();
     return;
   }
 
-  const serverType = args[0];
+  // Default to license-api server if no arguments provided (for Claude Desktop compatibility)
+  const serverType = args[0] || 'license-api';
 
   switch (serverType) {
     case 'license-api':
