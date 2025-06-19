@@ -1,9 +1,13 @@
-name: Release and Publish
+# DISABLED: This workflow conflicts with semantic-release.yml
+# The semantic release workflow handles all releases automatically
+# To re-enable, remove this comment and the semantic-release.yml workflow
 
-on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+# name: Release and Publish
+
+# on:
+#   push:
+#     branches: [ main, master ]
+#   workflow_dispatch:
     inputs:
       release_type:
         description: 'Release type'
