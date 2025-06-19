@@ -19,9 +19,9 @@
     "prepare": "npm run build"
   },
   "bin": {
-    "licensespring-mcp-server": "./dist/index.js",
-    "licensespring-mcp-license": "./dist/license-api-server.js",
-    "licensespring-mcp-management": "./dist/management-api-server.js"
+    "licensespring-mcp-server": "dist/index.js",
+    "licensespring-mcp-license": "dist/license-api-server.js",
+    "licensespring-mcp-management": "dist/management-api-server.js"
   },
   "files": [
     "dist/"
@@ -59,7 +59,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stier1ba/licensespring-mcp.git"
+    "url": "git+https://github.com/stier1ba/licensespring-mcp.git"
   },
   "bugs": {
     "url": "https://github.com/stier1ba/licensespring-mcp/issues"
