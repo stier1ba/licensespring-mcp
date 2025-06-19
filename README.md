@@ -250,6 +250,8 @@ For comprehensive guides and advanced configuration:
 npm install -g @tfedorko/licensespring-mcp-server
 ```
 
+> **Note**: Requires Node.js 20.x or higher for optimal compatibility.
+
 ### Docker Images
 ```bash
 # License API Server
