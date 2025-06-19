@@ -14,8 +14,21 @@ const LICENSE_API_URL = process.env.LICENSE_API_URL || 'https://api.licensesprin
 const LICENSE_API_KEY = process.env.LICENSE_API_KEY;
 const LICENSE_SHARED_KEY = process.env.LICENSE_SHARED_KEY;
 
-// Validate configuration
-validateLicenseApiAuth(LICENSE_API_KEY, LICENSE_SHARED_KEY);
+// Validate configuration with better error handling
+try {
+  validateLicenseApiAuth(LICENSE_API_KEY, LICENSE_SHARED_KEY);
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  console.error('❌ Configuration Error:', errorMessage);
+  console.error('');
+  console.error('Please check your environment variables:');
+  console.error('1. Copy .env.example to .env');
+  console.error('2. Set LICENSE_API_KEY to your LicenseSpring License API key');
+  console.error('3. Optionally set LICENSE_SHARED_KEY (required for premium tiers)');
+  console.error('');
+  console.error('For more information, see the README.md file.');
+  process.exit(1);
+}
 
 // Create HTTP client
 const apiClient = new LicenseApiClient(LICENSE_API_URL, LICENSE_API_KEY!, LICENSE_SHARED_KEY);
@@ -668,12 +681,26 @@ server.registerTool('get_sso_url', {
 
 // Start server
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error('LicenseSpring License API MCP server v2.0.0 running on stdio');
+  try {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error('LicenseSpring License API MCP server v2.0.0 running on stdio');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('❌ Failed to start MCP server:', errorMessage);
+    console.error('');
+    console.error('This could be due to:');
+    console.error('- Invalid MCP transport configuration');
+    console.error('- Port already in use');
+    console.error('- Permission issues');
+    console.error('');
+    console.error('Please check the server configuration and try again.');
+    process.exit(1);
+  }
 }
 
 main().catch((error) => {
-  console.error('Server error:', error);
+  console.error('❌ Unexpected server error:', error.message);
+  console.error('Stack trace:', error.stack);
   process.exit(1);
 });

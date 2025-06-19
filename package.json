@@ -19,6 +19,7 @@
     "prepare": "npm run build"
   },
   "bin": {
+    "licensespring-mcp-server": "./dist/index.js",
     "licensespring-mcp-license": "./dist/license-api-server.js",
     "licensespring-mcp-management": "./dist/management-api-server.js"
   },

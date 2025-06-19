@@ -44,38 +44,62 @@ For more information, see README.md
 
 function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     showUsage();
     return;
   }
 
   const serverType = args[0];
-  
+
   switch (serverType) {
     case 'license-api':
       console.log('Starting LicenseSpring License API MCP server...');
-      spawn('tsx', [join(__dirname, 'license-api-server.ts')], {
+      const licenseProcess = spawn('node', [join(__dirname, 'license-api-server.js')], {
         stdio: 'inherit',
         cwd: process.cwd()
       });
+
+      licenseProcess.on('error', (error) => {
+        console.error('Failed to start License API server:', error.message);
+        process.exit(1);
+      });
+
+      licenseProcess.on('exit', (code) => {
+        if (code !== 0) {
+          console.error(`License API server exited with code ${code}`);
+          process.exit(code || 1);
+        }
+      });
       break;
-      
+
     case 'management-api':
       console.log('Starting LicenseSpring Management API MCP server...');
-      spawn('tsx', [join(__dirname, 'management-api-server.ts')], {
+      const managementProcess = spawn('node', [join(__dirname, 'management-api-server.js')], {
         stdio: 'inherit',
         cwd: process.cwd()
       });
+
+      managementProcess.on('error', (error) => {
+        console.error('Failed to start Management API server:', error.message);
+        process.exit(1);
+      });
+
+      managementProcess.on('exit', (code) => {
+        if (code !== 0) {
+          console.error(`Management API server exited with code ${code}`);
+          process.exit(code || 1);
+        }
+      });
       break;
-      
+
     default:
       console.error(`Unknown server type: ${serverType}`);
+      console.error('Valid options are: license-api, management-api');
       showUsage();
       process.exit(1);
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
-}
+// Run main function when this file is executed directly
+main();
