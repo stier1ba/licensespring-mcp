@@ -1,4 +1,4 @@
-# LicenseSpring MCP Server
+# LicenseSpring® MCP Server
 
 An MCP server implementation that integrates with LicenseSpring APIs, providing comprehensive license management and customer operations capabilities.
 
@@ -272,3 +272,7 @@ docker build -t licensespring-mcp-management:latest -f Dockerfile.management .
 ## License
 
 This MCP server is licensed under the MIT License. This means you are free to use, modify, and distribute the software, subject to the terms and conditions of the MIT License. For more details, please see the LICENSE file in the project repository.
+
+## Trademark Notice
+
+This project uses the LicenseSpring® name under permission from Cense Data Inc. See the [TRADEMARK](TRADEMARK) file for details.
