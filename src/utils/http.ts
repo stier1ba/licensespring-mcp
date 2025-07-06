@@ -3,19 +3,21 @@ import { generateLicenseApiAuthHeader, generateManagementApiAuthHeader } from '.
 
 /**
  * HTTP client for LicenseSpring License API
+ * Uses LICENSE_API_KEY as the primary authentication method
+ * Optionally uses LICENSE_SHARED_KEY for enhanced security when available
  */
 export class LicenseApiClient {
   private client: AxiosInstance;
   private apiKey: string;
   private sharedKey?: string;
   private isTestMode: boolean;
-  private isLimitedMode: boolean;
+  private hasSharedKey: boolean;
 
   constructor(baseURL: string, apiKey: string, sharedKey?: string) {
     this.apiKey = apiKey;
     this.sharedKey = sharedKey;
     this.isTestMode = apiKey.startsWith('test-') || process.env.NODE_ENV === 'test';
-    this.isLimitedMode = !sharedKey && !this.isTestMode;
+    this.hasSharedKey = !!sharedKey && !this.isTestMode;
 
     this.client = axios.create({
       baseURL,
@@ -27,17 +29,14 @@ export class LicenseApiClient {
     });
 
     // Add request interceptor to add authentication headers
+    // LICENSE_API_KEY is always used as the primary authentication method
     this.client.interceptors.request.use((config) => {
       if (this.isTestMode) {
-        // Test mode: use mock headers
+        // Test mode: use mock headers with API key
         config.headers.Date = new Date().toUTCString();
         config.headers.Authorization = `algorithm="hmac-sha256",headers="date",signature="test-signature",apikey="${this.apiKey}"`;
-      } else if (this.isLimitedMode) {
-        // Limited mode: API key only (will likely fail but let the API respond)
-        config.headers.Date = new Date().toUTCString();
-        config.headers.Authorization = `apikey="${this.apiKey}"`;
-      } else {
-        // Full mode: proper HMAC authentication
+      } else if (this.hasSharedKey) {
+        // Enhanced security mode: API key with HMAC signature using shared key
         const { date, authorization } = generateLicenseApiAuthHeader(
           this.sharedKey!,
           this.apiKey
@@ -45,6 +44,10 @@ export class LicenseApiClient {
 
         config.headers.Date = date;
         config.headers.Authorization = authorization;
+      } else {
+        // Standard mode: API key as primary authentication method
+        config.headers.Date = new Date().toUTCString();
+        config.headers.Authorization = `apikey="${this.apiKey}"`;
       }
 
       return config;
@@ -110,7 +113,7 @@ export class ManagementApiClient {
 }
 
 /**
- * Handle API errors consistently with subscription tier awareness
+ * Handle API errors consistently with authentication method awareness
  */
 export function handleApiError(error: any): string {
   if (error.response) {
@@ -118,7 +121,7 @@ export function handleApiError(error: any): string {
     const status = error.response.status;
     const data = error.response.data;
 
-    // Check for authentication-related errors that might indicate missing shared key
+    // Check for authentication-related errors
     if (status === 401 || status === 403) {
       const errorMessage = data?.message || data?.error || data?.detail || error.response.statusText;
 
@@ -127,8 +130,8 @@ export function handleApiError(error: any): string {
           errorMessage.toLowerCase().includes('signature') ||
           errorMessage.toLowerCase().includes('unauthorized')) {
         return `Authentication failed: ${errorMessage}. ` +
-               `This may indicate that LICENSE_SHARED_KEY is required for your LicenseSpring subscription tier. ` +
-               `Contact LicenseSpring support to upgrade your plan for full API access.`;
+               `Verify your LICENSE_API_KEY is correct. ` +
+               `If your organization uses shared API settings, you may also need to provide LICENSE_SHARED_KEY for enhanced security.`;
       }
 
       return `Access denied: ${errorMessage}`;

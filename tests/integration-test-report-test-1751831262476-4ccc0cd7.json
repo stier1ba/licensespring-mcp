@@ -1,0 +1,29 @@
+{
+  "testId": "test-1751831262476-4ccc0cd7",
+  "timestamp": "2025-07-06T19:47:49.518Z",
+  "duration": "7.04s",
+  "environment": {
+    "hasLicenseApiKey": true,
+    "hasSharedKey": true,
+    "hasManagementApiKey": true,
+    "authenticationMode": "Enhanced Security"
+  },
+  "results": {
+    "total": 22,
+    "passed": 21,
+    "failed": 1,
+    "errors": [
+      {
+        "tool": "get_customer",
+        "params": {
+          "id": 1309971539
+        },
+        "error": "MCP protocol error: MCP error -32602: Tool get_customer not found"
+      }
+    ]
+  },
+  "testData": {
+    "customersCreated": 1,
+    "licensesCreated": 0
+  }
+}

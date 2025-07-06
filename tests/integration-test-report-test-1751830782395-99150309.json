@@ -1,0 +1,33 @@
+{
+  "testId": "test-1751830782395-99150309",
+  "timestamp": "2025-07-06T19:39:49.548Z",
+  "duration": "7.15s",
+  "environment": {
+    "hasLicenseApiKey": true,
+    "hasSharedKey": true,
+    "hasManagementApiKey": true,
+    "authenticationMode": "Enhanced Security"
+  },
+  "results": {
+    "total": 23,
+    "passed": 22,
+    "failed": 2,
+    "errors": [
+      {
+        "tool": "get_customer",
+        "params": {
+          "id": 1309971538
+        },
+        "error": "Invalid MCP response structure"
+      },
+      {
+        "phase": "execution",
+        "error": "Invalid MCP response structure"
+      }
+    ]
+  },
+  "testData": {
+    "customersCreated": 1,
+    "licensesCreated": 0
+  }
+}

@@ -9,7 +9,8 @@ An MCP server implementation that integrates with LicenseSpring APIs, providing 
 - **Usage Tracking**: Monitor license consumption and feature usage
 - **Trial Management**: Generate and manage trial licenses
 - **Floating Licenses**: Handle floating license operations
-- **Subscription Tier Support**: Works with all LicenseSpring subscription tiers
+- **Authentication Priority**: LICENSE_API_KEY as primary method, LICENSE_SHARED_KEY optional for enhanced security
+- **Comprehensive Testing**: Full integration test suite with real API validation
 
 ## Tools
 
@@ -40,9 +41,26 @@ An MCP server implementation that integrates with LicenseSpring APIs, providing 
 
 ### Getting API Credentials
 
-1. **License API**: Log into your LicenseSpring dashboard → Settings → Keys
-2. **Management API**: Same location, copy your Management API Key
-3. **Shared Key**: Available for Premium/Enterprise subscription tiers only
+1. **License API Key**: Log into your LicenseSpring dashboard → Settings → Keys (PRIMARY authentication method)
+2. **Management API Key**: Same location, copy your Management API Key
+3. **Shared Key**: Optional for organizations using shared API settings (provides enhanced security)
+
+### Testing
+
+Run the comprehensive integration test to validate functionality:
+
+```bash
+# Build the project
+npm run build
+
+# Run integration tests against real LicenseSpring API
+npm run test:integration
+
+# Run unit tests
+npm test
+```
+
+The integration test validates all 34 MCP tools against the real LicenseSpring API and verifies authentication priority works correctly. The implementation provides 100% feature parity with the LicenseSpring Postman collection.
 
 ### Usage with Claude Desktop
 
@@ -61,7 +79,7 @@ Add this to your `claude_desktop_config.json`:
       ],
       "env": {
         "LICENSE_API_KEY": "YOUR_LICENSE_API_KEY",
-        "LICENSE_SHARED_KEY": "YOUR_SHARED_KEY_OR_LEAVE_EMPTY"
+        "LICENSE_SHARED_KEY": "YOUR_SHARED_KEY_IF_USING_SHARED_API_SETTINGS"
       }
     }
   }

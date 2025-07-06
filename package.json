@@ -1,6 +1,6 @@
 {
   "name": "@tfedorko/licensespring-mcp-server",
-  "version": "1.1.6",
+  "version": "1.2.0",
   "description": "MCP server for LicenseSpring API integration - License management and customer operations",
   "main": "dist/license-api-server.js",
   "type": "module",
@@ -11,6 +11,7 @@
     "license-api": "node dist/license-api-server.js",
     "management-api": "node dist/management-api-server.js",
     "test": "jest",
+    "test:integration": "node tests/comprehensive-integration-test.js",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "install-claude": "node install-for-claude.js install",

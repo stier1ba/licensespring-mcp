@@ -1,0 +1,26 @@
+{
+  "testId": "test-1751831887626-34d30526",
+  "timestamp": "2025-07-06T19:58:17.647Z",
+  "duration": "10.02s",
+  "environment": {
+    "hasLicenseApiKey": true,
+    "hasSharedKey": true,
+    "hasManagementApiKey": true,
+    "authenticationMode": "Enhanced Security"
+  },
+  "results": {
+    "total": 0,
+    "passed": 0,
+    "failed": 1,
+    "errors": [
+      {
+        "phase": "execution",
+        "error": "license server startup timeout"
+      }
+    ]
+  },
+  "testData": {
+    "customersCreated": 0,
+    "licensesCreated": 0
+  }
+}

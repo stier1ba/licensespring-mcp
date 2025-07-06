@@ -23,8 +23,8 @@ try {
   console.error('');
   console.error('Please check your environment variables:');
   console.error('1. Copy .env.example to .env');
-  console.error('2. Set LICENSE_API_KEY to your LicenseSpring License API key');
-  console.error('3. Optionally set LICENSE_SHARED_KEY (required for premium tiers)');
+  console.error('2. Set LICENSE_API_KEY to your LicenseSpring License API key (primary authentication method)');
+  console.error('3. Optionally set LICENSE_SHARED_KEY (for organizations using shared API settings)');
   console.error('');
   console.error('For more information, see the README.md file.');
   process.exit(1);
@@ -683,16 +683,14 @@ server.registerTool('get_customer_license_users', {
   title: 'Get Customer License Users',
   description: 'Get customer license users for a specific license',
   inputSchema: {
-    license_key: z.string().min(1, 'License key is required'),
-    hardware_id: z.string().min(1, 'Hardware ID is required'),
     product: z.string().min(1, 'Product code is required'),
+    customer: z.string().min(1, 'Customer email or account code is required'),
   },
-}, async ({ license_key, hardware_id, product }) => {
+}, async ({ product, customer }) => {
   try {
     const queryParams = new URLSearchParams({
-      license_key,
-      hardware_id,
       product,
+      customer,
     });
     const response = await apiClient.get(`/api/v4/customer_license_users?${queryParams}`);
 
