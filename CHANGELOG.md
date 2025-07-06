@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/stier1ba/licensespring-mcp/compare/v1.2.0...v1.3.0) (2025-07-06)
+
+
+### 🚀 Features
+
+* enhance GitHub release automation with advanced quality gates and monitoring ([42b7ccc](https://github.com/stier1ba/licensespring-mcp/commit/42b7ccc37007c40c5a01f9ce8879891e3f6a7202))
+
+
+### 🐛 Bug Fixes
+
+* correct JSON syntax error in semantic release configuration ([7c5ef97](https://github.com/stier1ba/licensespring-mcp/commit/7c5ef973d7b2b211fa203cedb30504cdd3268f74))
+* resolve GitHub Actions semantic release workflow timeout failures ([e7f73f7](https://github.com/stier1ba/licensespring-mcp/commit/e7f73f777e00dec765baeb8ca58774e664c8a2f6))
+
+
+### ✅ Tests
+
+* verify GitHub Actions integration with configured secrets ([3087042](https://github.com/stier1ba/licensespring-mcp/commit/308704221b8a405f1cc429f8eb42378eea12e674))
+
 ## [1.2.0](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.6...v1.2.0) (2025-07-06)
 
 
