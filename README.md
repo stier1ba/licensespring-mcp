@@ -62,6 +62,8 @@ npm test
 
 The integration test validates all 34 MCP tools against the real LicenseSpring API and verifies authentication priority works correctly. The implementation provides 100% feature parity with the LicenseSpring Postman collection.
 
+🔧 **CI/CD Integration**: GitHub Actions workflows now support full integration testing with proper secret configuration.
+
 ### Usage with Claude Desktop
 
 Add this to your `claude_desktop_config.json`:
