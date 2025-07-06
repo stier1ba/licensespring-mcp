@@ -29,6 +29,12 @@
     "release": "npm run test && npm run build && npm run version:patch && npm run publish:stable",
     "release:minor": "npm run test && npm run build && npm run version:minor && npm run publish:stable",
     "release:major": "npm run test && npm run build && npm run version:major && npm run publish:stable",
+    "release:validate": "node scripts/release-automation.js validate",
+    "release:prepare": "node scripts/release-automation.js prepare",
+    "release:verify": "node scripts/release-automation.js verify",
+    "release:rollback": "node scripts/release-automation.js rollback",
+    "release:status": "node scripts/release-automation.js status",
+    "release:auto": "npm run release:validate && npm run release:prepare",
     "verify:npm": "node scripts/verify-npm-setup.js",
     "diagnose:workflows": "node scripts/diagnose-workflows.js"
   },

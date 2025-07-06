@@ -76,8 +76,24 @@
           {
             "path": "CHANGELOG.md",
             "label": "Changelog"
+          },
+          {
+            "path": "README.md",
+            "label": "Documentation"
+          },
+          {
+            "path": "docs/**/*.md",
+            "label": "Additional Documentation"
+          },
+          {
+            "path": "package.json",
+            "label": "Package Configuration"
           }
         ],
+        "addReleases": "bottom",
+        "successComment": "🎉 This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version [${nextRelease.version}](${releases.filter(release => release.name === 'GitHub')[0].url}) 🎉\n\n📦 **NPM Package**: [@tfedorko/licensespring-mcp-server@${nextRelease.version}](https://www.npmjs.com/package/@tfedorko/licensespring-mcp-server/v/${nextRelease.version})\n\n🔗 **Installation**: `npm install @tfedorko/licensespring-mcp-server@${nextRelease.version}`",
+        "failComment": "❌ The release from the `${branch.name}` branch had an error and the following issues weren't resolved:\n\n${errors.map(error => `- ${error.message}`).join('\\n')}",
+        "releasedLabels": ["released<%= nextRelease.channel ? ` on @\${nextRelease.channel}` : \"\" %>"],
         "addReleases": "bottom"
       }
     ],
