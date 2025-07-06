@@ -33,8 +33,17 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Check for API secrets
+        id: check-secrets
+        run: |
+          if [ -n "${{ secrets.LICENSE_API_KEY }}" ] && [ -n "${{ secrets.MANAGEMENT_API_KEY }}" ]; then
+            echo "secrets-available=true" >> $GITHUB_OUTPUT
+          else
+            echo "secrets-available=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run integration tests
-        if: ${{ secrets.LICENSE_API_KEY && secrets.MANAGEMENT_API_KEY }}
+        if: steps.check-secrets.outputs.secrets-available == 'true'
         run: npm run test:integration
         env:
           LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
@@ -43,7 +52,7 @@ jobs:
         continue-on-error: true
 
       - name: Skip integration tests (missing secrets)
-        if: ${{ !secrets.LICENSE_API_KEY || !secrets.MANAGEMENT_API_KEY }}
+        if: steps.check-secrets.outputs.secrets-available == 'false'
         run: |
           echo "⚠️ Integration tests skipped - LicenseSpring API secrets not configured"
           echo "To enable integration tests, configure these repository secrets:"
