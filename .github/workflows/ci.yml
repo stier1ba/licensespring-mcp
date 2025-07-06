@@ -30,11 +30,29 @@ jobs:
     - name: Run linter
       run: npm run lint
 
-    - name: Run tests
+    - name: Run unit tests
       run: npm test
 
     - name: Build project
       run: npm run build
+
+    - name: Run integration tests
+      if: ${{ secrets.LICENSE_API_KEY && secrets.MANAGEMENT_API_KEY }}
+      run: npm run test:integration
+      env:
+        LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
+        LICENSE_SHARED_KEY: ${{ secrets.LICENSE_SHARED_KEY }}
+        MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
+      continue-on-error: true
+
+    - name: Skip integration tests (missing secrets)
+      if: ${{ !secrets.LICENSE_API_KEY || !secrets.MANAGEMENT_API_KEY }}
+      run: |
+        echo "⚠️ Integration tests skipped - LicenseSpring API secrets not configured"
+        echo "To enable integration tests, configure these repository secrets:"
+        echo "- LICENSE_API_KEY (required)"
+        echo "- LICENSE_SHARED_KEY (optional, for enhanced security)"
+        echo "- MANAGEMENT_API_KEY (required)"
 
     - name: Upload coverage to Codecov
       if: matrix.node-version == '20.x'
