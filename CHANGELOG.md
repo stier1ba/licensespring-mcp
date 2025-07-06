@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.6...v1.2.0) (2025-07-06)
+
+
+### 🚀 Features
+
+* achieve 100% Postman collection parity and authentication priority updates ([33da146](https://github.com/stier1ba/licensespring-mcp/commit/33da146ab755a2a75361d2d766711bd354a554cf))
+
+
+### 🐛 Bug Fixes
+
+* resolve GitHub Actions workflow failures and enable integration testing ([6883005](https://github.com/stier1ba/licensespring-mcp/commit/688300567cce9f969cf21b92de129e0068a3a431))
+* resolve GitHub Actions workflow syntax errors and improve secret handling ([3b78ad1](https://github.com/stier1ba/licensespring-mcp/commit/3b78ad1b96d16c893316291ecacdbbbaf3a664d4))
+
 ## [1.1.6](https://github.com/stier1ba/licensespring-mcp/compare/v1.1.5...v1.1.6) (2025-06-19)
 
 
