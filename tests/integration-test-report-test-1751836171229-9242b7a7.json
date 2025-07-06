@@ -1,0 +1,21 @@
+{
+  "testId": "test-1751836171229-9242b7a7",
+  "timestamp": "2025-07-06T21:09:41.220Z",
+  "duration": "9.98s",
+  "environment": {
+    "hasLicenseApiKey": true,
+    "hasSharedKey": true,
+    "hasManagementApiKey": true,
+    "authenticationMode": "Enhanced Security"
+  },
+  "results": {
+    "total": 31,
+    "passed": 31,
+    "failed": 0,
+    "errors": []
+  },
+  "testData": {
+    "customersCreated": 1,
+    "licensesCreated": 0
+  }
+}

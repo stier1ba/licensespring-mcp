@@ -21,6 +21,7 @@ export class LicenseApiClient {
 
     this.client = axios.create({
       baseURL,
+      timeout: 25000, // 25 second timeout to prevent hanging requests
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json;charset=utf-8',
@@ -80,9 +81,10 @@ export class ManagementApiClient {
 
   constructor(baseURL: string, apiKey: string) {
     this.apiKey = apiKey;
-    
+
     this.client = axios.create({
       baseURL,
+      timeout: 25000, // 25 second timeout to prevent hanging requests
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
