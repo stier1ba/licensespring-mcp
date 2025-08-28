@@ -1,5 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { generateLicenseApiAuthHeader, generateManagementApiAuthHeader } from './auth.js';
+// TODO: Integrate retry logic and logging in a future update
+// import { withRetry, isRetryableError } from './retry.js';
+// import { licenseApiLogger, managementApiLogger } from './logger.js';
 
 /**
  * HTTP client for LicenseSpring License API
@@ -39,7 +42,7 @@ export class LicenseApiClient {
       } else if (this.hasSharedKey) {
         // Enhanced security mode: API key with HMAC signature using shared key
         const { date, authorization } = generateLicenseApiAuthHeader(
-          this.sharedKey!,
+          this.sharedKey || '',
           this.apiKey
         );
 
@@ -55,19 +58,19 @@ export class LicenseApiClient {
     });
   }
 
-  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.get(url, config);
   }
 
-  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.post(url, data, config);
   }
 
-  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.put(url, data, config);
   }
 
-  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.delete(url, config);
   }
 }
@@ -93,23 +96,23 @@ export class ManagementApiClient {
     });
   }
 
-  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.get(url, config);
   }
 
-  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.post(url, data, config);
   }
 
-  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.put(url, data, config);
   }
 
-  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.delete(url, config);
   }
 
-  async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async patch<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.patch(url, data, config);
   }
 }
@@ -117,15 +120,34 @@ export class ManagementApiClient {
 /**
  * Handle API errors consistently with authentication method awareness
  */
-export function handleApiError(error: any): string {
-  if (error.response) {
+interface AxiosLikeError {
+  response?: {
+    status: number;
+    statusText: string;
+    data?: {
+      message?: string;
+      error?: string;
+      detail?: string;
+    };
+  };
+  request?: unknown;
+  message?: string;
+}
+
+export function handleApiError(error: unknown): string {
+  if (!error || typeof error !== 'object') {
+    return 'Unknown error occurred while communicating with LicenseSpring API';
+  }
+  
+  const axiosError = error as AxiosLikeError;
+  if (axiosError.response) {
     // Server responded with error status
-    const status = error.response.status;
-    const data = error.response.data;
+    const status = axiosError.response.status;
+    const data = axiosError.response.data;
 
     // Check for authentication-related errors
     if (status === 401 || status === 403) {
-      const errorMessage = data?.message || data?.error || data?.detail || error.response.statusText;
+      const errorMessage = data?.message || data?.error || data?.detail || axiosError.response.statusText;
 
       // If it looks like an authentication error, provide helpful guidance
       if (errorMessage.toLowerCase().includes('auth') ||
@@ -146,12 +168,12 @@ export function handleApiError(error: any): string {
       if (data.detail) return data.detail;
     }
 
-    return `HTTP ${status}: ${error.response.statusText}`;
-  } else if (error.request) {
+    return `HTTP ${status}: ${axiosError.response.statusText}`;
+  } else if (axiosError.request) {
     // Request was made but no response received
     return 'No response received from LicenseSpring API server. Please check your internet connection.';
   } else {
     // Something else happened
-    return error.message || 'Unknown error occurred while communicating with LicenseSpring API';
+    return axiosError.message || 'Unknown error occurred while communicating with LicenseSpring API';
   }
 }

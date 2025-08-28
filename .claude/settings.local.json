@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.licensespring.com)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:integration:*)",
+      "Bash(npm outdated)",
+      "Bash(npm audit:*)",
+      "Bash(npm update:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

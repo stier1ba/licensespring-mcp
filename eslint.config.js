@@ -23,6 +23,10 @@ export default [
         module: 'readonly',
         require: 'readonly',
         exports: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
         // Browser/Web API globals
         URLSearchParams: 'readonly',
         URL: 'readonly',

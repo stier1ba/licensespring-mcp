@@ -6,6 +6,7 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import { ManagementApiClient, handleApiError } from './utils/http.js';
 import { validateManagementApiAuth } from './utils/auth.js';
+import { managementApiLogger } from './utils/logger.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,13 +30,60 @@ try {
 }
 
 // Create HTTP client
-const apiClient = new ManagementApiClient(MANAGEMENT_API_URL, MANAGEMENT_API_KEY!);
+const apiClient = new ManagementApiClient(MANAGEMENT_API_URL, MANAGEMENT_API_KEY || '');
 
 // Create MCP server
 const server = new McpServer({
   name: 'licensespring-management-api',
   version: '2.0.0',
 });
+
+// Track server state for health checks
+let serverStartTime = Date.now();
+let isHealthy = true;
+let transport: StdioServerTransport | null = null;
+
+// Health Check Resource
+server.registerResource(
+  'health',
+  'licensespring://health',
+  {
+    title: 'Health Check',
+    description: 'Service health status and metrics',
+    mimeType: 'application/json'
+  },
+  async (uri) => {
+    const uptime = Date.now() - serverStartTime;
+    const memoryUsage = process.memoryUsage();
+    
+    const healthData = {
+      status: isHealthy ? 'healthy' : 'unhealthy',
+      service: 'licensespring-management-api',
+      version: '2.0.0',
+      uptime: Math.floor(uptime / 1000),
+      timestamp: new Date().toISOString(),
+      environment: {
+        node_version: process.version,
+        platform: process.platform,
+        api_url: MANAGEMENT_API_URL,
+        has_api_key: !!MANAGEMENT_API_KEY
+      },
+      memory: {
+        rss: Math.round(memoryUsage.rss / 1024 / 1024),
+        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024)
+      }
+    };
+    
+    return {
+      contents: [{
+        uri: uri.toString(),
+        text: JSON.stringify(healthData, null, 2),
+        mimeType: 'application/json'
+      }]
+    };
+  }
+);
 
 // Resources - Expose management data
 server.registerResource(
@@ -46,13 +94,13 @@ server.registerResource(
     description: 'List of all licenses in the system',
     mimeType: 'application/json'
   },
-  async (uri: any) => {
+  async (uri) => {
     try {
       const response = await apiClient.get('/api/v1/licenses/?limit=100');
       
       return {
         contents: [{
-          uri: uri.href,
+          uri: uri.toString(),
           text: JSON.stringify(response.data, null, 2),
           mimeType: 'application/json'
         }]
@@ -71,13 +119,13 @@ server.registerResource(
     description: 'List of all customers in the system',
     mimeType: 'application/json'
   },
-  async (uri: any) => {
+  async (uri) => {
     try {
       const response = await apiClient.get('/api/v1/customers/?limit=100');
       
       return {
         contents: [{
-          uri: uri.href,
+          uri: uri.toString(),
           text: JSON.stringify(response.data, null, 2),
           mimeType: 'application/json'
         }]
@@ -96,13 +144,13 @@ server.registerResource(
     description: 'List of all products in the system',
     mimeType: 'application/json'
   },
-  async (uri: any) => {
+  async (uri) => {
     try {
       const response = await apiClient.get('/api/v1/products/?limit=100');
       
       return {
         contents: [{
-          uri: uri.href,
+          uri: uri.toString(),
           text: JSON.stringify(response.data, null, 2),
           mimeType: 'application/json'
         }]
@@ -311,7 +359,7 @@ server.registerTool('update_license', {
   },
 }, async ({ id, enabled, note, validity_period }) => {
   try {
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (enabled !== undefined) updateData.enabled = enabled;
     if (note !== undefined) updateData.note = note;
     if (validity_period !== undefined) updateData.validity_period = validity_period;
@@ -552,7 +600,7 @@ server.registerTool('assign_user_to_license', {
   },
 }, async ({ license_id, email, first_name, last_name, phone_number, is_manager, password, max_activations, total_activations }) => {
   try {
-    const requestData: any = {
+    const requestData: Record<string, unknown> = {
       email,
       is_manager,
     };
@@ -732,7 +780,7 @@ server.registerTool('import_licenses_from_csv', {
   },
 }, async ({ csv_file, product_id, customer_id }) => {
   try {
-    const requestData: any = {
+    const requestData: Record<string, unknown> = {
       csv_file,
     };
 
@@ -758,11 +806,62 @@ server.registerTool('import_licenses_from_csv', {
   }
 });
 
+// Graceful shutdown handler
+async function gracefulShutdown(signal: string) {
+  managementApiLogger.info(`Received ${signal}, starting graceful shutdown...`);
+  isHealthy = false;
+  
+  try {
+    // Give ongoing requests 5 seconds to complete
+    setTimeout(() => {
+      managementApiLogger.warn('Forcing shutdown after timeout');
+      process.exit(1);
+    }, 5000);
+    
+    // Close the transport connection
+    if (transport) {
+      managementApiLogger.info('Closing server transport...');
+      await transport.close();
+    }
+    
+    managementApiLogger.info('Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    managementApiLogger.error('Error during graceful shutdown', error);
+    process.exit(1);
+  }
+}
+
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGHUP', () => gracefulShutdown('SIGHUP'));
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+  managementApiLogger.error('Uncaught exception', error);
+  isHealthy = false;
+  gracefulShutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  managementApiLogger.error('Unhandled rejection', reason, { promise });
+  isHealthy = false;
+  gracefulShutdown('unhandledRejection');
+});
+
 // Start server
 async function main() {
   try {
-    const transport = new StdioServerTransport();
+    transport = new StdioServerTransport();
     await server.connect(transport);
+    serverStartTime = Date.now();
+    isHealthy = true;
+    
+    managementApiLogger.info('LicenseSpring Management API MCP server v2.0.0 started', {
+      api_url: MANAGEMENT_API_URL,
+      has_api_key: !!MANAGEMENT_API_KEY
+    });
     console.error('LicenseSpring Management API MCP server v2.0.0 running on stdio');
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
