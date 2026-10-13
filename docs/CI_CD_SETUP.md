@@ -22,7 +22,7 @@ To enable full integration testing in CI/CD, configure these repository secrets:
 
 ### 1. LICENSE_API_KEY (Required)
 - **Purpose**: Primary authentication for LicenseSpring License API
-- **Value**: Your LicenseSpring API key (e.g., `08b410a0-bf46-4663-a320-b13bc7bce70f`)
+- **Value**: Your LicenseSpring API key (e.g., `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
 - **Usage**: Used for all License API operations
 
 ### 2. MANAGEMENT_API_KEY (Required)
@@ -30,10 +30,13 @@ To enable full integration testing in CI/CD, configure these repository secrets:
 - **Value**: Your LicenseSpring Management API key
 - **Usage**: Used for customer and license management operations
 
-### 3. LICENSE_SHARED_KEY (Optional)
-- **Purpose**: Enhanced HMAC security for organizations with shared API settings
-- **Value**: Your LicenseSpring shared key for HMAC authentication
-- **Usage**: Provides enhanced security when available
+### 3. LICENSE_SHARED_KEY (Required with LICENSE_API_KEY)
+- **Purpose**: HMAC request signing — the License API rejects unsigned requests
+- **Value**: Your LicenseSpring shared key (Settings → Keys)
+- **Alternative**: `LICENSE_CLIENT_ID` + `LICENSE_CLIENT_SECRET` secrets for OAuth
+
+### 4. LS_TEST_PRODUCT (Optional repository variable)
+- **Purpose**: Product short code used by live integration tests
 
 ## How to Configure Secrets
 
