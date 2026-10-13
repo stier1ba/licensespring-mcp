@@ -10,6 +10,7 @@ const config: LicenseApiConfig = {
   baseUrl: 'https://api.test',
   auth: { type: 'api-key', apiKey: 'ak', sharedKey: 'sk' },
   timeoutMs: 1000,
+  readOnly: false,
   maxRetries: 0,
 };
 

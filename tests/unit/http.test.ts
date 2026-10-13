@@ -17,6 +17,7 @@ const apiKeyConfig: LicenseApiConfig = {
   baseUrl: 'https://api.test',
   auth: { type: 'api-key', apiKey: 'ak', sharedKey: 'sk' },
   timeoutMs: 1000,
+  readOnly: false,
   maxRetries: 2,
 };
 
@@ -24,10 +25,11 @@ const oauthConfig: LicenseApiConfig = {
   baseUrl: 'https://api.test',
   auth: { type: 'oauth', clientId: 'cid', clientSecret: 'csecret', tokenUrl: 'https://auth.test' },
   timeoutMs: 1000,
+  readOnly: false,
   maxRetries: 0,
 };
 
-const managementConfig: ManagementApiConfig = { baseUrl: 'https://saas.test', apiKey: 'mk', timeoutMs: 1000, maxRetries: 0 };
+const managementConfig: ManagementApiConfig = { baseUrl: 'https://saas.test', apiKey: 'mk', timeoutMs: 1000, maxRetries: 0, readOnly: false };
 
 const noSleep = { sleep: async () => {} };
 

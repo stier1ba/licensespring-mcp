@@ -15,7 +15,20 @@ describe('loadLicenseApiConfig', () => {
       auth: { type: 'api-key', apiKey: 'key', sharedKey: 'shared' },
       timeoutMs: 25000,
       maxRetries: 2,
+      readOnly: false,
     });
+  });
+
+  it.each([
+    ['true', true], ['1', true], ['YES', true], ['on', true],
+    ['false', false], ['0', false], ['no', false], ['off', false],
+  ])('parses LICENSESPRING_READ_ONLY=%s', (raw, expected) => {
+    expect(loadLicenseApiConfig({ LICENSE_API_KEY: 'k', LICENSE_SHARED_KEY: 's', LICENSESPRING_READ_ONLY: raw }).readOnly).toBe(expected);
+  });
+
+  it('rejects an invalid LICENSESPRING_READ_ONLY value', () => {
+    expect(() => loadLicenseApiConfig({ LICENSE_API_KEY: 'k', LICENSE_SHARED_KEY: 's', LICENSESPRING_READ_ONLY: 'maybe' }))
+      .toThrow('LICENSESPRING_READ_ONLY must be true or false');
   });
 
   it('prefers OAuth when client credentials are set', () => {
@@ -32,6 +45,7 @@ describe('loadLicenseApiConfig', () => {
       auth: { type: 'oauth', clientId: 'auth-company-1', clientSecret: 'secret', tokenUrl: DEFAULT_OAUTH_TOKEN_URL },
       timeoutMs: 1000,
       maxRetries: 0,
+      readOnly: false,
     });
   });
 
@@ -70,10 +84,24 @@ describe('loadManagementApiConfig', () => {
     expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk' })).toEqual({
       baseUrl: DEFAULT_MANAGEMENT_API_URL,
       apiKey: 'mk',
+      toolsets: undefined,
       timeoutMs: 25000,
       maxRetries: 2,
+      readOnly: false,
     });
     expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_API_URL: 'https://m' }).baseUrl).toBe('https://m');
+  });
+
+  it('parses MANAGEMENT_TOOLSETS', () => {
+    expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_TOOLSETS: ' orders, devices,orders ' }).toolsets).toEqual(['orders', 'devices']);
+    expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_TOOLSETS: 'ALL' }).toolsets).toBeUndefined();
+  });
+
+  it.each([
+    ['orders,bogus', 'unknown toolsets: bogus'],
+    [',,', 'unknown toolsets: (empty)'],
+  ])('rejects MANAGEMENT_TOOLSETS=%s', (raw, message) => {
+    expect(() => loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_TOOLSETS: raw })).toThrow(message);
   });
 
   it('requires MANAGEMENT_API_KEY', () => {

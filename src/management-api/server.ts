@@ -3,11 +3,11 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 import { ConfigError, loadManagementApiConfig } from '../config.js';
 import { createServerState, healthPayload, runStdioServer, type ServerState } from '../runtime.js';
-import { registerTools } from '../tools.js';
+import { registerTools, selectTools } from '../tools.js';
 import { handleApiError, ManagementApiClient, PACKAGE_VERSION, type ApiClient } from '../utils/http.js';
 import { managementApiLogger } from '../utils/logger.js';
 import type { StartOptions } from '../license-api/server.js';
-import { createManagementApiTools } from './tools.js';
+import { createManagementApiTools, type ManagementToolset } from './tools/index.js';
 
 export const MANAGEMENT_SERVER_NAME = 'licensespring-management-api';
 
@@ -20,7 +20,7 @@ const LIST_RESOURCES = [
 
 export function createManagementApiServer(
   client: ApiClient,
-  options: { baseUrl: string; state?: ServerState },
+  options: { baseUrl: string; state?: ServerState; toolsets?: readonly string[]; readOnly?: boolean },
 ): McpServer {
   const state = options.state ?? createServerState();
   const server = new McpServer({ name: MANAGEMENT_SERVER_NAME, version: PACKAGE_VERSION });
@@ -33,7 +33,15 @@ export function createManagementApiServer(
       contents: [{
         uri: uri.href,
         mimeType: 'application/json',
-        text: JSON.stringify(healthPayload(MANAGEMENT_SERVER_NAME, PACKAGE_VERSION, state, { api_url: options.baseUrl }), null, 2),
+        text: JSON.stringify(
+          healthPayload(MANAGEMENT_SERVER_NAME, PACKAGE_VERSION, state, {
+            api_url: options.baseUrl,
+            toolsets: options.toolsets ?? 'all',
+            read_only: options.readOnly ?? false,
+          }),
+          null,
+          2,
+        ),
       }],
     }),
   );
@@ -144,7 +152,8 @@ export function createManagementApiServer(
     }),
   );
 
-  registerTools(server, createManagementApiTools(client));
+  const tools = createManagementApiTools(client, options.toolsets as readonly ManagementToolset[] | undefined);
+  registerTools(server, selectTools(tools, options.readOnly));
   return server;
 }
 
@@ -158,7 +167,12 @@ export async function startManagementApiServer(options: StartOptions = {}): Prom
     const config = loadManagementApiConfig(env);
     const client = new ManagementApiClient(config, { logger });
     const state = createServerState();
-    const server = createManagementApiServer(client, { baseUrl: config.baseUrl, state });
+    const server = createManagementApiServer(client, {
+      baseUrl: config.baseUrl,
+      state,
+      toolsets: config.toolsets,
+      readOnly: config.readOnly,
+    });
     await runStdioServer({
       server,
       logger,

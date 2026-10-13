@@ -9,7 +9,7 @@ import { connect, mockAxios, silentLogger, type MockResponder } from './helpers.
 function licenseServer(responder: MockResponder = () => ({ data: [{ short_code: 'P' }] })) {
   const { http, requests } = mockAxios(responder);
   const client = new LicenseApiClient(
-    { baseUrl: 'https://api.test', auth: { type: 'api-key', apiKey: 'ak', sharedKey: 'sk' }, timeoutMs: 1000, maxRetries: 0 },
+    { baseUrl: 'https://api.test', auth: { type: 'api-key', apiKey: 'ak', sharedKey: 'sk' }, timeoutMs: 1000, maxRetries: 0, readOnly: false },
     { http },
   );
   return { server: createLicenseApiServer(client, { baseUrl: 'https://api.test' }), requests };
@@ -17,7 +17,7 @@ function licenseServer(responder: MockResponder = () => ({ data: [{ short_code: 
 
 function managementServer(responder: MockResponder = () => ({ data: { count: 0, results: [] } })) {
   const { http, requests } = mockAxios(responder);
-  const client = new ManagementApiClient({ baseUrl: 'https://saas.test', apiKey: 'mk', timeoutMs: 1000, maxRetries: 0 }, { http });
+  const client = new ManagementApiClient({ baseUrl: 'https://saas.test', apiKey: 'mk', timeoutMs: 1000, maxRetries: 0, readOnly: false }, { http });
   return { server: createManagementApiServer(client, { baseUrl: 'https://saas.test', state: createServerState() }), requests };
 }
 
@@ -43,6 +43,20 @@ describe('License API server', () => {
 
     await client.readResource({ uri: 'licensespring://product/MY%20P/details' });
     expect(requests.map((r) => r.url)).toEqual(['/api/v4/products', '/api/v4/product_details?product=MY+P']);
+  });
+
+  it('registers only read-only tools in read-only mode', async () => {
+    const { http } = mockAxios();
+    const apiClient = new LicenseApiClient(
+      { baseUrl: 'https://api.test', auth: { type: 'api-key', apiKey: 'ak', sharedKey: 'sk' }, timeoutMs: 1000, maxRetries: 0, readOnly: true },
+      { http },
+    );
+    const client = await connect(createLicenseApiServer(apiClient, { baseUrl: 'https://api.test', readOnly: true }));
+    const names = (await client.listTools()).tools.map((tool) => tool.name);
+    expect(names).toContain('check_license');
+    expect(names).not.toContain('activate_license');
+    const health = JSON.parse(text((await client.readResource({ uri: 'licensespring://health' })).contents));
+    expect(health.environment.read_only).toBe(true);
   });
 
   it('wraps resource API failures', async () => {
@@ -101,7 +115,7 @@ describe('Management API server', () => {
 
   it('creates its own state when none is supplied', async () => {
     const { http } = mockAxios();
-    const server = createManagementApiServer(new ManagementApiClient({ baseUrl: 'b', apiKey: 'k', timeoutMs: 1, maxRetries: 0 }, { http }), { baseUrl: 'b' });
+    const server = createManagementApiServer(new ManagementApiClient({ baseUrl: 'b', apiKey: 'k', timeoutMs: 1, maxRetries: 0, readOnly: false }, { http }), { baseUrl: 'b' });
     const client = await connect(server);
     expect(JSON.parse(text((await client.readResource({ uri: 'licensespring://health' })).contents)).status).toBe('healthy');
   });

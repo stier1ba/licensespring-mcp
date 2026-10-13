@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 import { ConfigError, loadLicenseApiConfig } from '../config.js';
 import { createServerState, healthPayload, runStdioServer, type ProcessLike, type ServerState } from '../runtime.js';
-import { registerTools } from '../tools.js';
+import { registerTools, selectTools } from '../tools.js';
 import { handleApiError, LicenseApiClient, PACKAGE_VERSION } from '../utils/http.js';
 import { licenseApiLogger, type Logger } from '../utils/logger.js';
 import { createLicenseApiTools } from './tools.js';
@@ -12,7 +12,7 @@ export const LICENSE_SERVER_NAME = 'licensespring-license-api';
 
 export function createLicenseApiServer(
   client: LicenseApiClient,
-  options: { baseUrl: string; state?: ServerState },
+  options: { baseUrl: string; state?: ServerState; readOnly?: boolean },
 ): McpServer {
   const state = options.state ?? createServerState();
   const server = new McpServer({ name: LICENSE_SERVER_NAME, version: PACKAGE_VERSION });
@@ -26,7 +26,11 @@ export function createLicenseApiServer(
         uri: uri.href,
         mimeType: 'application/json',
         text: JSON.stringify(
-          healthPayload(LICENSE_SERVER_NAME, PACKAGE_VERSION, state, { api_url: options.baseUrl, auth: client.authType }),
+          healthPayload(LICENSE_SERVER_NAME, PACKAGE_VERSION, state, {
+            api_url: options.baseUrl,
+            auth: client.authType,
+            read_only: options.readOnly ?? false,
+          }),
           null,
           2,
         ),
@@ -139,7 +143,7 @@ export function createLicenseApiServer(
     }),
   );
 
-  registerTools(server, createLicenseApiTools(client));
+  registerTools(server, selectTools(createLicenseApiTools(client), options.readOnly));
   return server;
 }
 
@@ -160,7 +164,7 @@ export async function startLicenseApiServer(options: StartOptions = {}): Promise
     const config = loadLicenseApiConfig(env);
     const client = new LicenseApiClient(config, { logger });
     const state = createServerState();
-    const server = createLicenseApiServer(client, { baseUrl: config.baseUrl, state });
+    const server = createLicenseApiServer(client, { baseUrl: config.baseUrl, state, readOnly: config.readOnly });
     await runStdioServer({
       server,
       logger,

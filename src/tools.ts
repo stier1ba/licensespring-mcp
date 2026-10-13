@@ -40,6 +40,11 @@ export function errorResult(title: string, error: unknown): CallToolResult {
   return { content: [{ type: 'text', text: `${title} failed: ${message}` }], isError: true };
 }
 
+/** Keep only tools annotated as read-only when `readOnly` is set. */
+export function selectTools(tools: ToolDefinition[], readOnly = false): ToolDefinition[] {
+  return readOnly ? tools.filter((tool) => tool.annotations.readOnlyHint === true) : tools;
+}
+
 export function registerTools(server: McpServer, tools: ToolDefinition[]): void {
   for (const tool of tools) {
     server.registerTool(

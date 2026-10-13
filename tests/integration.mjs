@@ -39,6 +39,10 @@ const suites = [
       ['list_orders', { limit: 1 }],
       ['list_license_users', { limit: 1 }],
       ['list_devices', { limit: 1 }],
+      ['list_customer_accounts', { limit: 1 }],
+      ['list_license_policies', { limit: 1 }],
+      ['list_product_features', { limit: 1 }],
+      ['list_activities', { limit: 1 }],
     ],
   },
 ];

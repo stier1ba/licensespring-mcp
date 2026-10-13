@@ -7,7 +7,7 @@ The package ships two stdio servers:
 | Server | API | Typical use |
 | --- | --- | --- |
 | `license-api` | [License API](https://docs.licensespring.com/license-api) (`/api/v4`) | Client-side operations: activation, checks, consumption, floating, trials, offline activation |
-| `management-api` | [Management API](https://docs.licensespring.com/management-api) (`/api/v1`) | Back-office operations: orders, licenses, customers, license users, devices, analytics |
+| `management-api` | [Management API](https://docs.licensespring.com/management-api) (`/api/v1`) | Back-office operations: every documented endpoint for orders, licenses, customers, license users, products, devices, consumption pools, OAuth clients and analytics |
 
 Every tool, its HTTP endpoint and the matching LicenseSpring documentation page are listed in [docs/API_COVERAGE.md](docs/API_COVERAGE.md).
 
@@ -44,6 +44,8 @@ Offline activation tools sign their payload with the shared key (API key method)
 | `LICENSE_OAUTH_TOKEN_URL` | LicenseSpring Keycloak token endpoint | Override for OAuth tokens |
 | `LICENSESPRING_TIMEOUT_MS` | `25000` | Per-request timeout |
 | `LICENSESPRING_MAX_RETRIES` | `2` | Retries for rate limiting (any method) and network/5xx errors (GET only) |
+| `MANAGEMENT_TOOLSETS` | all | Comma-separated Management toolsets to register: `licenses`, `license_users`, `orders`, `customers`, `products`, `devices`, `analytics`, `consumption_pools`, `oauth_clients` |
+| `LICENSESPRING_READ_ONLY` | `false` | Register only read-only tools (both servers) |
 | `LOG_LEVEL` | `INFO` (`WARN` in production) | `ERROR`, `WARN`, `INFO` or `DEBUG`. Logs go to stderr. |
 
 Variables can also be placed in a `.env` file in the working directory (see [.env.example](.env.example)).
@@ -154,20 +156,23 @@ Key-based products identify a license with `license_key`, and user-based product
 Resources: `licensespring://health`, `licensespring://products`, `licensespring://product/{product}/details`.
 Prompts: `license-troubleshooting`, `customer-onboarding`.
 
-### Management API server (57 tools)
+### Management API server (173 tools, every documented endpoint)
 
-| Area | Tools |
+| Toolset | Covers |
 | --- | --- |
-| Licenses | `list_licenses`, `get_license`, `update_license`, `delete_license`, `enable_license`, `disable_license`, `reset_license`, `reset_license_consumption`, `apply_license_policy`, `update_license_features`, `bulk_update_licenses`, `bulk_disable_licenses`, `check_license_status`, `import_licenses_from_csv`, `list_license_import_results` |
-| License users | `assign_user_to_license`, `assign_users_to_license`, `unassign_user_from_license`, `set_user_activations`, `list_license_users`, `get_license_user`, `create_license_user`, `update_license_user`, `delete_license_user`, `set_license_user_password` |
-| License features | `list_license_features`, `update_license_feature` |
-| Orders | `list_orders`, `get_order`, `create_order`, `update_order`, `delete_order`, `generate_license_keys` |
-| Customers | `list_customers`, `get_customer`, `create_customer`, `update_customer`, `delete_customer`, `list_customer_accounts`, `get_customer_account`, `create_customer_account` |
-| Products | `list_products`, `get_product`, `list_product_features`, `list_license_policies`, `list_installation_files` |
-| Devices | `list_devices`, `get_device`, `reset_device`, `blacklist_device`, `whitelist_device`, `borrow_device`, `release_borrowed_device`, `list_device_variables` |
-| History & analytics | `list_license_activation_histories`, `list_license_usage_histories`, `list_activities` |
+| `licenses` (33) | List, get, update, delete, enable/disable, reset (single, bulk, custom bulk), consumption reset, policy apply, bulk update/disable, back-office check, license features, license custom fields, CSV imports of licenses and license features with their results, license user export |
+| `license_users` (24) | Assign/unassign users and activation limits, license user CRUD and passwords, license user groups and their managers, license manager permissions |
+| `orders` (12) | List, get, create (issues licenses), update (including changing the customer), delete, key generation, exports, order managers |
+| `customers` (25) | Customer CRUD, merge, export, CSV import, labels, customer accounts and their managers |
+| `products` (35) | Products, bundles, product features, custom fields and enumerations, installation files, license policies, exports and CSV imports |
+| `devices` (12) | Devices (reset, blacklist/whitelist, borrow/release) and device variables |
+| `analytics` (13) | Activities, hourly aggregates, activation and usage history, transfer counts, usage history export |
+| `consumption_pools` (10) | Consumption pools, members and offline checkouts |
+| `oauth_clients` (9) | License API OAuth clients scoped to licenses, customers and customer accounts |
 
 Licenses are issued with `create_order`, which matches how the Management API creates them. List tools accept `limit`, `offset` and a `filters` object for any documented filter, such as `{"customer_email__icontains": "acme"}` or [metadata filters](https://docs.licensespring.com/management-api/metadata-filtering).
+
+Many MCP clients work best with fewer tools, and some cap the count (for example 128). Set `MANAGEMENT_TOOLSETS` to a comma-separated list (e.g. `licenses,orders,customers`) to register only those toolsets. Set `LICENSESPRING_READ_ONLY=true` to register only read-only tools on either server.
 
 Resources: `licensespring://health` and the first 100 licenses, customers, products and orders (`licensespring://management/{licenses,customers,products,orders}`).
 Prompts: `license-management-workflow`, `customer-analysis`.

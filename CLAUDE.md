@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 LicenseSpring MCP Server: two stdio MCP servers for the LicenseSpring APIs.
 - **License API server** (`/api/v4`, 30 tools): activation, checks, consumption, floating, offline activation, trials.
-- **Management API server** (`/api/v1`, 57 tools): licenses, orders, customers, license users, devices, analytics.
+- **Management API server** (`/api/v1`, 173 tools): every documented endpoint, grouped into toolsets (`MANAGEMENT_TOOLSETS`).
 
 `docs/API_COVERAGE.md` maps every tool to its endpoint and LicenseSpring docs page. Keep it in sync when tools change. LicenseSpring docs are available as Markdown by appending `.md` to any docs.licensespring.com URL (index: https://docs.licensespring.com/llms.txt).
 
@@ -26,8 +26,9 @@ npm run dev -- --help    # Run the CLI from source
 
 - `src/index.ts` → `src/cli.ts`: CLI router (`license-api` default, `management-api`, `--help`, `--version`); starts servers in-process.
 - `src/license-api-server.ts`, `src/management-api-server.ts`: thin bin entry points.
-- `src/license-api/{server,tools}.ts`, `src/management-api/{server,tools}.ts`: server factories (resources, prompts) and declarative tool definitions.
-- `src/tools.ts`: `defineTool`/`registerTools`, MCP annotation presets, result/error formatting, `ToolInputError`.
+- `src/license-api/{server,tools}.ts`: License API server factory and tool definitions.
+- `src/management-api/server.ts` + `src/management-api/tools/*.ts`: one module per toolset; `tools/shared.ts` has the list/retrieve/create/update/action/remove/upload builders; `tools/index.ts` maps toolset names (keep in sync with `MANAGEMENT_TOOLSET_NAMES` in `src/config.ts`).
+- `src/tools.ts`: `defineTool`/`registerTools`/`selectTools` (read-only filter), MCP annotation presets, result/error formatting, `ToolInputError`.
 - `src/config.ts`: environment parsing (`ConfigError` on invalid config).
 - `src/runtime.ts`: stdio transport, graceful shutdown, health payload.
 - `src/utils/http.ts`: `LicenseApiClient` (HMAC or OAuth bearer signing, offline payload builder) and `ManagementApiClient` (`Api-Key`), query building, retries, `handleApiError`.
