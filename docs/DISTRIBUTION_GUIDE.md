@@ -154,7 +154,7 @@ If you prefer manual setup:
 3. **Users download and extract:**
    ```bash
    tar -xzf licensespring-mcp-v1.0.0.tar.gz
-   node install-for-claude.js install
+   # then point Claude Desktop at dist/license-api-server.js (see docs/claude_desktop_config.json)
    ```
 
 ## 🎯 Usage Examples in Claude Desktop
@@ -173,7 +173,7 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 - *"Show me licenses for customer timothy@company.com"*
 
 ### License Operations
-- *"Create a new license for customer ID 123 and product ID 456"*
+- *"Create an order with one perpetual license of product ABC for john@example.com"*
 - *"Update license 789 to disable it"*
 - *"Show me all active licenses"*
 
@@ -188,8 +188,8 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 
 **"Authentication failed" errors:**
 - Verify your LicenseSpring API keys are correct
-- Check your subscription tier and shared key requirements
-- See `SUBSCRIPTION_TIERS.md` for detailed guidance
+- License API key auth needs both `LICENSE_API_KEY` and `LICENSE_SHARED_KEY` (or use OAuth client credentials)
+- See the Troubleshooting section of `README.md`
 
 **"No tools available" in Claude:**
 - Restart Claude Desktop after configuration changes
@@ -201,7 +201,7 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 1. **Check the logs:** Claude Desktop shows MCP server logs in its developer console
 2. **Test manually:** Run the servers directly to test functionality
 3. **Verify credentials:** Use the LicenseSpring web interface to confirm API access
-4. **Review documentation:** See `README.md` and `SUBSCRIPTION_TIERS.md`
+4. **Review documentation:** See `README.md` and `docs/API_COVERAGE.md`
 
 ## 🚀 Advanced Configuration
 

@@ -1,19 +1,14 @@
-FROM node:22-alpine
-
+FROM node:22-alpine AS build
 WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Copy source code
+COPY package*.json tsconfig.json ./
 COPY src/ ./src/
+RUN npm ci --ignore-scripts && npm run build
 
-# Install dependencies and build
-RUN npm ci && npm run build
-
-# Make the binary executable
-RUN chmod +x dist/*.js
-
-# Set the entrypoint
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+COPY --from=build /app/dist ./dist
+USER node
 ENTRYPOINT ["node", "dist/license-api-server.js"]

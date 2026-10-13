@@ -1,179 +1,277 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { generateLicenseApiAuthHeader, generateManagementApiAuthHeader } from './auth.js';
-// TODO: Integrate retry logic and logging in a future update
-// import { withRetry, isRetryableError } from './retry.js';
-// import { licenseApiLogger, managementApiLogger } from './logger.js';
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
+import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import type { LicenseApiConfig, ManagementApiConfig } from '../config.js';
+import {
+  generateApiKeyAuthorization,
+  generateManagementApiAuthHeader,
+  generateOfflineSignature,
+  httpDate,
+} from './auth.js';
+import { OAuthTokenProvider } from './oauth.js';
+import { errorStatus, isRetryableError, withRetry, type RetryOptions } from './retry.js';
+import type { Logger } from './logger.js';
 
-/**
- * HTTP client for LicenseSpring License API
- * Uses LICENSE_API_KEY as the primary authentication method
- * Optionally uses LICENSE_SHARED_KEY for enhanced security when available
- */
-export class LicenseApiClient {
-  private client: AxiosInstance;
-  private apiKey: string;
-  private sharedKey?: string;
-  private isTestMode: boolean;
-  private hasSharedKey: boolean;
+export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
-  constructor(baseURL: string, apiKey: string, sharedKey?: string) {
-    this.apiKey = apiKey;
-    this.sharedKey = sharedKey;
-    this.isTestMode = apiKey.startsWith('test-') || process.env.NODE_ENV === 'test';
-    this.hasSharedKey = !!sharedKey && !this.isTestMode;
+export interface ApiRequest {
+  method: HttpMethod;
+  path: string;
+  query?: Record<string, unknown>;
+  body?: unknown;
+  headers?: Record<string, string>;
+}
 
-    this.client = axios.create({
-      baseURL,
-      timeout: 25000, // 25 second timeout to prevent hanging requests
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json;charset=utf-8',
-        'User-Agent': 'LicenseSpring-MCP-Server/2.0.0'
-      }
-    });
+export interface ApiClient {
+  request<T = unknown>(request: ApiRequest): Promise<T>;
+}
 
-    // Add request interceptor to add authentication headers
-    // LICENSE_API_KEY is always used as the primary authentication method
-    this.client.interceptors.request.use((config) => {
-      if (this.isTestMode) {
-        // Test mode: use mock headers with API key
-        config.headers.Date = new Date().toUTCString();
-        config.headers.Authorization = `algorithm="hmac-sha256",headers="date",signature="test-signature",apikey="${this.apiKey}"`;
-      } else if (this.hasSharedKey) {
-        // Enhanced security mode: API key with HMAC signature using shared key
-        const { date, authorization } = generateLicenseApiAuthHeader(
-          this.sharedKey || '',
-          this.apiKey
-        );
-
-        config.headers.Date = date;
-        config.headers.Authorization = authorization;
-      } else {
-        // Standard mode: API key as primary authentication method
-        config.headers.Date = new Date().toUTCString();
-        config.headers.Authorization = `apikey="${this.apiKey}"`;
-      }
-
-      return config;
-    });
-  }
-
-  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.get(url, config);
-  }
-
-  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.post(url, data, config);
-  }
-
-  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.put(url, data, config);
-  }
-
-  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.delete(url, config);
+function readPackageVersion(): string {
+  try {
+    const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as { version?: string };
+    return pkg.version ?? '0.0.0';
+  } catch {
+    return '0.0.0';
   }
 }
 
+export const PACKAGE_VERSION = readPackageVersion();
+export const USER_AGENT = `licensespring-mcp-server/${PACKAGE_VERSION}`;
+
 /**
- * HTTP client for LicenseSpring Management API
+ * Serialize query parameters, dropping undefined/null values. Arrays become comma-separated
+ * lists (e.g. `id__in`), objects are JSON-encoded (e.g. `metadata` filters).
  */
-export class ManagementApiClient {
-  private client: AxiosInstance;
-  private apiKey: string;
-
-  constructor(baseURL: string, apiKey: string) {
-    this.apiKey = apiKey;
-
-    this.client = axios.create({
-      baseURL,
-      timeout: 25000, // 25 second timeout to prevent hanging requests
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': generateManagementApiAuthHeader(apiKey)
-      }
-    });
+export function buildQueryString(query: Record<string, unknown> = {}): string {
+  const params = new URLSearchParams();
+  for (const [key, raw] of Object.entries(query)) {
+    if (raw === undefined || raw === null) continue;
+    let value: string;
+    if (Array.isArray(raw)) value = raw.join(',');
+    else if (typeof raw === 'object') value = JSON.stringify(raw);
+    else value = String(raw);
+    params.append(key, value);
   }
+  return params.toString();
+}
 
-  async get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.get(url, config);
-  }
+/** Remove keys whose value is undefined so they are not sent in JSON bodies. */
+export function compact<T extends Record<string, unknown>>(input: T): Partial<T> {
+  return Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined)) as Partial<T>;
+}
 
-  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.post(url, data, config);
-  }
+abstract class BaseApiClient implements ApiClient {
+  constructor(
+    protected readonly http: AxiosInstance,
+    private readonly retry: RetryOptions,
+    protected readonly logger?: Logger,
+  ) {}
 
-  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.put(url, data, config);
-  }
+  async request<T = unknown>({ method, path, query, body, headers }: ApiRequest): Promise<T> {
+    const qs = buildQueryString(query);
+    const url = qs ? `${path}?${qs}` : path;
 
-  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.delete(url, config);
-  }
-
-  async patch<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.client.patch(url, data, config);
+    const response = await withRetry(
+      () => this.http.request<T>({ method, url, data: body, headers }),
+      {
+        ...this.retry,
+        shouldRetry: (error) => isRetryableError(error, method),
+        onRetry: (attempt, error, delayMs) =>
+          this.logger?.warn('Retrying LicenseSpring API request', {
+            method,
+            path,
+            attempt,
+            delayMs,
+            status: errorStatus(error),
+          }),
+      },
+    );
+    return response.data;
   }
 }
 
-/**
- * Handle API errors consistently with authentication method awareness
- */
+function createAxios(baseURL: string, timeout: number, headers: Record<string, string>): AxiosInstance {
+  return axios.create({
+    baseURL,
+    timeout,
+    headers: { Accept: 'application/json', 'User-Agent': USER_AGENT, ...headers },
+  });
+}
+
+export interface ClientDeps {
+  http?: AxiosInstance;
+  tokenProvider?: OAuthTokenProvider;
+  retry?: RetryOptions;
+  logger?: Logger;
+}
+
+/** HTTP client for the License API (`/api/v4`). Signs every request. */
+export class LicenseApiClient extends BaseApiClient {
+  private readonly tokenProvider?: OAuthTokenProvider;
+
+  constructor(private readonly config: LicenseApiConfig, deps: ClientDeps = {}) {
+    super(
+      deps.http ?? createAxios(config.baseUrl, config.timeoutMs, { 'Content-Type': 'application/json' }),
+      { maxRetries: config.maxRetries, ...deps.retry },
+      deps.logger,
+    );
+
+    if (config.auth.type === 'oauth') {
+      this.tokenProvider = deps.tokenProvider ?? new OAuthTokenProvider({
+        tokenUrl: config.auth.tokenUrl,
+        clientId: config.auth.clientId,
+        clientSecret: config.auth.clientSecret,
+        timeoutMs: config.timeoutMs,
+      });
+    }
+
+    this.http.interceptors.request.use((request) => this.authorize(request));
+  }
+
+  get authType(): LicenseApiConfig['auth']['type'] {
+    return this.config.auth.type;
+  }
+
+  private async authorize(request: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+    const date = httpDate();
+    request.headers.set('Date', date);
+    const auth = this.config.auth;
+    const authorization = auth.type === 'api-key'
+      ? generateApiKeyAuthorization(auth.apiKey, auth.sharedKey, date)
+      : `Bearer ${await (this.tokenProvider as OAuthTokenProvider).getToken()}`;
+    request.headers.set('Authorization', authorization);
+    return request;
+  }
+
+  override async request<T = unknown>(request: ApiRequest): Promise<T> {
+    try {
+      return await super.request<T>(request);
+    } catch (error) {
+      // A rejected bearer token may have been revoked; fetch a fresh one next time.
+      if (this.tokenProvider && errorStatus(error) === 401) this.tokenProvider.invalidate();
+      throw error;
+    }
+  }
+
+  /**
+   * Build the base64-encoded, signed payload used by the offline activation/deactivation
+   * endpoints. Adds `date`, `request_id`, the key identifier and the `signature`.
+   */
+  buildOfflinePayload(fields: Record<string, unknown> & { hardware_id: string }): string {
+    const identity = (fields.license_key ?? fields.username) as string | undefined;
+    if (!identity) {
+      throw new Error('Offline requests require license_key or username');
+    }
+
+    const auth = this.config.auth;
+    const keyId = auth.type === 'oauth' ? auth.clientId : auth.apiKey;
+    const secret = auth.type === 'oauth' ? auth.clientSecret : auth.sharedKey;
+    const date = httpDate();
+
+    const payload = compact({
+      ...fields,
+      request_id: (fields.request_id as string | undefined) ?? randomUUID(),
+      date,
+      ...(auth.type === 'oauth' ? { client_id: keyId } : { api_key: keyId }),
+      signature: generateOfflineSignature({
+        secret,
+        date,
+        licenseKeyOrUsername: identity,
+        hardwareId: fields.hardware_id,
+        keyId,
+      }),
+    });
+
+    return Buffer.from(JSON.stringify(payload)).toString('base64');
+  }
+}
+
+/** HTTP client for the Management API (`/api/v1`). */
+export class ManagementApiClient extends BaseApiClient {
+  constructor(config: ManagementApiConfig, deps: ClientDeps = {}) {
+    super(
+      deps.http ?? createAxios(config.baseUrl, config.timeoutMs, {
+        'Content-Type': 'application/json',
+        Authorization: generateManagementApiAuthHeader(config.apiKey),
+      }),
+      { maxRetries: config.maxRetries, ...deps.retry },
+      deps.logger,
+    );
+  }
+}
+
+/** Hints for common License API error codes. */
+const ERROR_HINTS: Record<string, string> = {
+  hmac_required: 'The request was not signed. Set LICENSE_SHARED_KEY alongside LICENSE_API_KEY.',
+  signature_mismatch: 'The request signature is invalid. Check that LICENSE_SHARED_KEY matches the key in Settings > Keys.',
+  invalid_api_key: 'Check LICENSE_API_KEY in Settings > Keys.',
+  date_header_diff: 'The system clock differs from LicenseSpring by more than 15 minutes.',
+  authorization_invalid_headers: 'The Authorization header is malformed.',
+  authorization_missing_params: 'The Authorization header is missing data.',
+};
+
+interface ErrorBody {
+  status?: number;
+  code?: string;
+  message?: string;
+  detail?: string;
+  error?: string;
+  error_description?: string;
+  [key: string]: unknown;
+}
+
+function describeBody(data: unknown): string | undefined {
+  if (data === undefined || data === null || data === '') return undefined;
+  if (typeof data === 'string') return data.length > 500 ? `${data.slice(0, 500)}…` : data;
+  if (Array.isArray(data)) return data.map(String).join('; ');
+  if (typeof data !== 'object') return String(data);
+
+  const body = data as ErrorBody;
+  if (body.code && body.message) {
+    const hint = ERROR_HINTS[body.code];
+    return `${body.message} [${body.code}]${hint ? ` ${hint}` : ''}`;
+  }
+  if (body.message) return body.message;
+  if (body.detail) return body.detail;
+  if (body.error_description) return body.error ? `${body.error}: ${body.error_description}` : body.error_description;
+  if (body.error) return body.error;
+
+  // Django REST framework style field errors: {"field": ["message", ...]}
+  return Object.entries(body)
+    .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : JSON.stringify(messages)}`)
+    .join('; ') || undefined;
+}
+
 interface AxiosLikeError {
-  response?: {
-    status: number;
-    statusText: string;
-    data?: {
-      message?: string;
-      error?: string;
-      detail?: string;
-    };
-  };
+  response?: { status: number; statusText?: string; data?: unknown };
   request?: unknown;
   message?: string;
+  code?: string;
 }
 
+/** Convert an API error into a concise, actionable message. */
 export function handleApiError(error: unknown): string {
   if (!error || typeof error !== 'object') {
-    return 'Unknown error occurred while communicating with LicenseSpring API';
+    return 'Unknown error occurred while communicating with the LicenseSpring API';
   }
-  
-  const axiosError = error as AxiosLikeError;
-  if (axiosError.response) {
-    // Server responded with error status
-    const status = axiosError.response.status;
-    const data = axiosError.response.data;
 
-    // Check for authentication-related errors
+  const err = error as AxiosLikeError;
+  if (err.response) {
+    const { status, statusText, data } = err.response;
+    const detail = describeBody(data) ?? statusText ?? 'Request failed';
+    if (status === 429) {
+      return `HTTP 429: rate limit exceeded (${detail}). LicenseSpring limits requests per company per 60-second window; retry shortly.`;
+    }
     if (status === 401 || status === 403) {
-      const errorMessage = data?.message || data?.error || data?.detail || axiosError.response.statusText;
-
-      // If it looks like an authentication error, provide helpful guidance
-      if (errorMessage.toLowerCase().includes('auth') ||
-          errorMessage.toLowerCase().includes('signature') ||
-          errorMessage.toLowerCase().includes('unauthorized')) {
-        return `Authentication failed: ${errorMessage}. ` +
-               `Verify your LICENSE_API_KEY is correct. ` +
-               `If your organization uses shared API settings, you may also need to provide LICENSE_SHARED_KEY for enhanced security.`;
-      }
-
-      return `Access denied: ${errorMessage}`;
+      return `HTTP ${status}: ${detail}. Verify the configured LicenseSpring credentials and their permissions.`;
     }
-
-    // Handle other error types
-    if (data && typeof data === 'object') {
-      if (data.message) return data.message;
-      if (data.error) return data.error;
-      if (data.detail) return data.detail;
-    }
-
-    return `HTTP ${status}: ${axiosError.response.statusText}`;
-  } else if (axiosError.request) {
-    // Request was made but no response received
-    return 'No response received from LicenseSpring API server. Please check your internet connection.';
-  } else {
-    // Something else happened
-    return axiosError.message || 'Unknown error occurred while communicating with LicenseSpring API';
+    return `HTTP ${status}: ${detail}`;
   }
+
+  if (err.request) {
+    const reason = err.code === 'ECONNABORTED' ? 'request timed out' : 'no response received';
+    return `LicenseSpring API unreachable (${reason}). Check network connectivity and the API URL.`;
+  }
+
+  return err.message || 'Unknown error occurred while communicating with the LicenseSpring API';
 }

@@ -53,7 +53,7 @@
   - Build project
   - Run comprehensive tests
 
-- **Node.js 20.x Testing**
+- **Node.js 24.x Testing**
   - Same test suite on different Node version
   - Ensures compatibility
 

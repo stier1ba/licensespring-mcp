@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -27,8 +27,11 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run unit tests
-        run: npm test
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run unit tests (100% coverage required)
+        run: npm run test:coverage
 
       - name: Build project
         run: npm run build
@@ -44,10 +47,12 @@ jobs:
 
       - name: Run integration tests
         if: steps.check-secrets.outputs.secrets-available == 'true'
-        run: npm run test:integration
+        run: node tests/integration.mjs
         env:
           LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
           LICENSE_SHARED_KEY: ${{ secrets.LICENSE_SHARED_KEY }}
+          LICENSE_CLIENT_ID: ${{ secrets.LICENSE_CLIENT_ID }}
+          LICENSE_CLIENT_SECRET: ${{ secrets.LICENSE_CLIENT_SECRET }}
           MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
         continue-on-error: true
 
@@ -57,7 +62,7 @@ jobs:
           echo "⚠️ Integration tests skipped - LicenseSpring API secrets not configured"
           echo "To enable integration tests, configure these repository secrets:"
           echo "- LICENSE_API_KEY (required)"
-          echo "- LICENSE_SHARED_KEY (optional, for enhanced security)"
+          echo "- LICENSE_SHARED_KEY (required with LICENSE_API_KEY)"
           echo "- MANAGEMENT_API_KEY (required)"
 
   release:
@@ -72,31 +77,20 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Install semantic-release dependencies
-        run: |
-          npm install -D @semantic-release/changelog@^6.0.0
-          npm install -D @semantic-release/git@^10.0.0
-          npm install -D @semantic-release/github@^9.0.0
-          npm install -D @semantic-release/npm@^11.0.0
-          npm install -D @semantic-release/commit-analyzer@^11.0.0
-          npm install -D @semantic-release/release-notes-generator@^12.0.0
-          npm install -D semantic-release@^22.0.0
-          npm install -D conventional-changelog-conventionalcommits@^7.0.0
 
       - name: Build project
         run: npm run build
@@ -115,10 +109,12 @@ jobs:
 
       - name: Run final integration tests before release
         if: steps.check-secrets-release.outputs.secrets-available == 'true'
-        run: npm run test:integration
+        run: node tests/integration.mjs
         env:
           LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
           LICENSE_SHARED_KEY: ${{ secrets.LICENSE_SHARED_KEY }}
+          LICENSE_CLIENT_ID: ${{ secrets.LICENSE_CLIENT_ID }}
+          LICENSE_CLIENT_SECRET: ${{ secrets.LICENSE_CLIENT_SECRET }}
           MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
         continue-on-error: true
         id: integration-tests
@@ -145,7 +141,7 @@ jobs:
           echo "📋 Release will proceed based on unit tests and build verification"
           echo "🔧 To enable integration tests in CI/CD, configure these repository secrets:"
           echo "  - LICENSE_API_KEY (required)"
-          echo "  - LICENSE_SHARED_KEY (optional, for enhanced security)"
+          echo "  - LICENSE_SHARED_KEY (required with LICENSE_API_KEY)"
           echo "  - MANAGEMENT_API_KEY (required)"
 
       - name: Verify package integrity
