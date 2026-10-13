@@ -1,7 +1,7 @@
 {
   "name": "@tfedorko/licensespring-mcp-server",
   "version": "2.0.0",
-  "description": "MCP server for LicenseSpring API integration - License management and customer operations",
+  "description": "MCP server for the LicenseSpring License and Management APIs: license activation, checks, consumption, floating, offline, orders, customers, users and devices",
   "main": "dist/license-api-server.js",
   "type": "module",
   "scripts": {
@@ -10,12 +10,13 @@
     "start": "node dist/index.js",
     "license-api": "node dist/license-api-server.js",
     "management-api": "node dist/management-api-server.js",
-    "test": "jest",
-    "test:integration": "node tests/comprehensive-integration-test.js",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
-    "install-claude": "node install-for-claude.js install",
-    "uninstall-claude": "node install-for-claude.js uninstall",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:smoke": "node --test tests/smoke/*.test.mjs",
+    "test:integration": "node --test tests/integration/*.test.mjs",
+    "test:all": "npm run lint && npm run test:coverage && npm run build && npm run test:smoke",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "version:patch": "node scripts/version.js patch",
@@ -26,9 +27,9 @@
     "publish:stable": "node scripts/publish.js",
     "publish:beta": "node scripts/publish.js --beta",
     "publish:dry": "node scripts/publish.js --dry-run",
-    "release": "npm run test && npm run build && npm run version:patch && npm run publish:stable",
-    "release:minor": "npm run test && npm run build && npm run version:minor && npm run publish:stable",
-    "release:major": "npm run test && npm run build && npm run version:major && npm run publish:stable",
+    "release": "npm run test:all && npm run version:patch && npm run publish:stable",
+    "release:minor": "npm run test:all && npm run version:minor && npm run publish:stable",
+    "release:major": "npm run test:all && npm run version:major && npm run publish:stable",
     "release:validate": "node scripts/release-automation.js validate",
     "release:prepare": "node scripts/release-automation.js prepare",
     "release:verify": "node scripts/release-automation.js verify",
@@ -44,53 +45,59 @@
     "licensespring-mcp-management": "dist/management-api-server.js"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "!dist/**/__tests__",
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "mcp",
     "model-context-protocol",
     "licensespring",
     "license-management",
-    "api-integration",
+    "software-licensing",
+    "floating-license",
+    "offline-activation",
     "typescript"
   ],
-  "author": "Your Name",
+  "author": "Timothy Fedorko",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.0",
-    "axios": "^1.7.0",
-    "dotenv": "^16.4.0",
-    "zod": "^3.23.0"
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "axios": "^1.20.0",
+    "dotenv": "^18.0.7",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.3",
-    "@semantic-release/release-notes-generator": "^12.1.0",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "conventional-changelog-conventionalcommits": "^7.0.2",
-    "eslint": "^9.0.0",
-    "jest": "^29.7.0",
-    "semantic-release": "^22.0.12",
-    "shx": "^0.3.4",
-    "ts-jest": "^29.2.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.20.5",
+    "@typescript-eslint/eslint-plugin": "^8.71.2",
+    "@typescript-eslint/parser": "^8.71.2",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
+    "eslint": "^10.12.0",
+    "jest": "^30.5.2",
+    "semantic-release": "^25.0.9",
+    "shx": "^0.4.0",
+    "ts-jest": "^29.4.14",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.14.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stier1ba/licensespring-mcp.git"
+    "url": "git+https://github.com/stier-tfedorko/licensespring-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/stier1ba/licensespring-mcp/issues"
+    "url": "https://github.com/stier-tfedorko/licensespring-mcp/issues"
   },
-  "homepage": "https://github.com/stier1ba/licensespring-mcp#readme"
+  "homepage": "https://github.com/stier-tfedorko/licensespring-mcp#readme"
 }
