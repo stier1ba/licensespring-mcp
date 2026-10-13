@@ -5,17 +5,15 @@
   "main": "dist/license-api-server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "build": "shx rm -rf dist && tsc && shx chmod +x dist/*.js",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "license-api": "node dist/license-api-server.js",
     "management-api": "node dist/management-api-server.js",
-    "test": "jest",
-    "test:integration": "node tests/comprehensive-integration-test.js",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
-    "install-claude": "node install-for-claude.js install",
-    "uninstall-claude": "node install-for-claude.js uninstall",
+    "test": "vitest run",
+    "test:integration": "npm run build && node tests/integration.mjs",
+    "lint": "eslint src tests/unit vitest.config.ts",
+    "lint:fix": "eslint src tests/unit vitest.config.ts --fix",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "version:patch": "node scripts/version.js patch",
@@ -36,7 +34,10 @@
     "release:status": "node scripts/release-automation.js status",
     "release:auto": "npm run release:validate && npm run release:prepare",
     "verify:npm": "node scripts/verify-npm-setup.js",
-    "diagnose:workflows": "node scripts/diagnose-workflows.js"
+    "diagnose:workflows": "node scripts/diagnose-workflows.js",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json"
   },
   "bin": {
     "licensespring-mcp-server": "dist/index.js",
@@ -44,7 +45,10 @@
     "licensespring-mcp-management": "dist/management-api-server.js"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "TRADEMARK"
   ],
   "keywords": [
     "mcp",
@@ -54,36 +58,35 @@
     "api-integration",
     "typescript"
   ],
-  "author": "Your Name",
+  "author": "Timothy Fedorko",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.0",
-    "axios": "^1.7.0",
-    "dotenv": "^16.4.0",
-    "zod": "^3.23.0"
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "axios": "^1.20.0",
+    "dotenv": "^17.4.2",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.3",
-    "@semantic-release/release-notes-generator": "^12.1.0",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "conventional-changelog-conventionalcommits": "^7.0.2",
-    "eslint": "^9.0.0",
-    "jest": "^29.7.0",
-    "semantic-release": "^22.0.12",
-    "shx": "^0.3.4",
-    "ts-jest": "^29.2.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
+    "@eslint/js": "^9.39.1",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@types/node": "^22.18.0",
+    "@vitest/coverage-v8": "~4.1.11",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "eslint": "^9.39.1",
+    "semantic-release": "^25.0.9",
+    "shx": "^0.4.0",
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "vitest": "~4.1.11"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.12.0"
   },
   "repository": {
     "type": "git",

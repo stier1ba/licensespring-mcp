@@ -46,7 +46,8 @@ on:
 **Check logs for**:
 ```
 npm run lint     # ESLint errors
-npm test         # Jest test failures
+npm test         # Vitest unit test failures
+npm run test:coverage  # coverage must stay at 100%
 npm run build    # TypeScript compilation
 node tests/comprehensive-test.js  # Integration tests
 ```

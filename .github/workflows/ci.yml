@@ -6,89 +6,88 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run linter
-      run: npm run lint
+      - name: Lint
+        run: npm run lint
 
-    - name: Run unit tests
-      run: npm test
+      - name: Typecheck
+        run: npm run typecheck
 
-    - name: Build project
-      run: npm run build
+      - name: Unit tests (100% coverage required)
+        run: npm run test:coverage
 
-    - name: Check for API secrets
-      id: check-secrets
-      run: |
-        if [ -n "${{ secrets.LICENSE_API_KEY }}" ] && [ -n "${{ secrets.MANAGEMENT_API_KEY }}" ]; then
-          echo "secrets-available=true" >> $GITHUB_OUTPUT
-        else
-          echo "secrets-available=false" >> $GITHUB_OUTPUT
-        fi
+      - name: Build
+        run: npm run build
 
-    - name: Run integration tests
-      if: steps.check-secrets.outputs.secrets-available == 'true'
-      run: npm run test:integration
-      env:
-        LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
-        LICENSE_SHARED_KEY: ${{ secrets.LICENSE_SHARED_KEY }}
-        MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
-      continue-on-error: true
+      - name: Check for API secrets
+        id: check-secrets
+        env:
+          LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
+          MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
+        run: |
+          if [ -n "$LICENSE_API_KEY" ] || [ -n "$MANAGEMENT_API_KEY" ]; then
+            echo "secrets-available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "secrets-available=false" >> "$GITHUB_OUTPUT"
+          fi
 
-    - name: Skip integration tests (missing secrets)
-      if: steps.check-secrets.outputs.secrets-available == 'false'
-      run: |
-        echo "⚠️ Integration tests skipped - LicenseSpring API secrets not configured"
-        echo "To enable integration tests, configure these repository secrets:"
-        echo "- LICENSE_API_KEY (required)"
-        echo "- LICENSE_SHARED_KEY (optional, for enhanced security)"
-        echo "- MANAGEMENT_API_KEY (required)"
+      - name: Live integration checks (read-only)
+        if: steps.check-secrets.outputs.secrets-available == 'true' && matrix.node-version == '22.x'
+        run: node tests/integration.mjs
+        env:
+          LICENSE_API_KEY: ${{ secrets.LICENSE_API_KEY }}
+          LICENSE_SHARED_KEY: ${{ secrets.LICENSE_SHARED_KEY }}
+          LICENSE_CLIENT_ID: ${{ secrets.LICENSE_CLIENT_ID }}
+          LICENSE_CLIENT_SECRET: ${{ secrets.LICENSE_CLIENT_SECRET }}
+          MANAGEMENT_API_KEY: ${{ secrets.MANAGEMENT_API_KEY }}
 
-    - name: Upload coverage to Codecov
-      if: matrix.node-version == '20.x'
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == '22.x'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   security:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run security audit
-      run: npm audit --audit-level=moderate
-
-    - name: Check for vulnerabilities
-      run: npx audit-ci --moderate
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=moderate
