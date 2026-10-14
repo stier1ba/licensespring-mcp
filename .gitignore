@@ -91,3 +91,24 @@ coverage/
 
 # TernJS port file
 .tern-port
+
+# --- Secret hygiene: keep credentials out of git ---
+# Local environment files (commit a .env.example with empty values instead)
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!.env.template
+# Private keys, certificates and keystores
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+# Cloud credential files
+credentials.json
+service-account*.json
+.aws/
