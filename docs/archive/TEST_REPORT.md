@@ -28,9 +28,9 @@ The LicenseSpring MCP servers have been comprehensively tested and demonstrate e
 
 ### Test Credentials Used
 ```
-LICENSE_API_KEY: 08b410a0-bf46-4663-a320-b13bc7bce70f (real)
+LICENSE_API_KEY: <redacted>
 LICENSE_SHARED_KEY: test-shared-key (mock - demonstrates subscription tier support)
-MANAGEMENT_API_KEY: nERvcb52.CN24IJyQvsROSHy6LmdVWTdVqtMfoNyj (real)
+MANAGEMENT_API_KEY: <redacted>
 ```
 
 ### Subscription Tier Testing

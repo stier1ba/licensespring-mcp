@@ -1,104 +1,37 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
-## Project Overview
+## Project
 
-LicenseSpring MCP Server - An MCP (Model Context Protocol) server implementation that integrates with LicenseSpring APIs for license management and customer operations. The project provides two separate MCP servers: License API server and Management API server.
+MCP servers for the LicenseSpring **License API** (`/api/v4`, 27 tools) and **Management API** (`/api/v1`, 41 tools). TypeScript, ESM, `@modelcontextprotocol/sdk` 1.32, zod 4, axios. Node ≥ 22.14.
 
-## Development Commands
+## Commands
 
-### Build and Development
 ```bash
-npm run build          # Compile TypeScript to JavaScript
-npm run dev           # Start in development mode (shows usage help)
-npm run lint          # Run ESLint on TypeScript files
-npm run lint:fix      # Auto-fix ESLint issues
-npm test              # Run unit tests with Jest
-npm run test:integration  # Run comprehensive integration tests against real API
-```
-
-### Running Servers
-```bash
-npm run license-api    # Start License API MCP server
-npm run management-api # Start Management API MCP server
-```
-
-### Release Commands
-```bash
-npm run release       # Patch release (1.0.0 -> 1.0.1)
-npm run release:minor # Minor release (1.0.0 -> 1.1.0)  
-npm run release:major # Major release (1.0.0 -> 2.0.0)
-npm run version:dry   # Preview version bump without changes
-npm run publish:dry   # Preview NPM publish without publishing
+npm run build            # tsc → dist/
+npm run lint             # eslint (no-console is an error: stdout is the MCP channel)
+npm test                 # Jest (ESM via --experimental-vm-modules)
+npm run test:coverage    # enforces 100% statements/branches/functions/lines
+npm run test:smoke       # node --test: spawns dist binaries over stdio + local mock HTTP server
+npm run test:integration # live API; skips without credentials
+npm run test:all         # lint + coverage + build + smoke — run before pushing
 ```
 
 ## Architecture
 
-### Project Structure
-- **src/index.ts**: Main entry point that routes to appropriate server
-- **src/license-api-server.ts**: License API MCP server implementation with 19 tools
-- **src/management-api-server.ts**: Management API MCP server with 15 tools
-- **src/utils/auth.ts**: Authentication validation and HMAC signature generation
-- **src/utils/http.ts**: HTTP client implementations for both APIs with error handling
-- **src/types/index.ts**: TypeScript type definitions for API responses
+- `src/config.ts` — env → `LicenseApiConfig` (HMAC `apiKey+sharedKey`, or OAuth `clientId+clientSecret`) / `ManagementApiConfig`.
+- `src/utils/http.ts` — `LicenseApiClient` (Date + HMAC or Bearer; OAuth token cache/refresh; `postText` for offline) and `ManagementApiClient` (`Api-Key`; `postMultipart`). GETs retry on 429/5xx/network; writes never retry. `handleApiError` formats `HTTP <status> (<code>): <message>`.
+- `src/utils/auth.ts` — request signature and offline payload signature.
+- `src/license-api/server.ts`, `src/management-api/server.ts` — `create*Server(client, options)` factories registering tools/resources/prompts. Tools call `run(label, fn)` from `src/tools/result.ts`, which turns thrown errors into `isError` results. Input rules the API documents are enforced with `ValidationError` before any request.
+- `src/license-api/identity.ts` — `license_key` | `username(+password)` | SSO identity validation.
+- `src/runtime.ts` / `src/main.ts` — stdio transport, signal handling, startup; injectable `ProcessLike` for tests.
+- `src/index.ts`, `src/*-server.ts` — 2-line bin wrappers (excluded from Jest coverage, covered by smoke tests).
 
-### Authentication Flow
-1. **Primary**: LICENSE_API_KEY for License API, MANAGEMENT_API_KEY for Management API
-2. **Optional**: LICENSE_SHARED_KEY for enhanced HMAC authentication (License API only)
-3. The server validates credentials on startup and provides tier-appropriate functionality
+## Rules
 
-### MCP Server Implementation
-- Built on `@modelcontextprotocol/sdk` for MCP protocol compliance
-- Uses StdioServerTransport for communication with Claude Desktop
-- Implements tools with Zod schema validation for parameters
-- Provides resources for data exposure (product details, licenses list, etc.)
-
-## Environment Configuration
-
-Required environment variables (set in .env file):
-- **LICENSE_API_KEY**: Primary authentication for License API
-- **LICENSE_SHARED_KEY**: Optional, for enhanced security with shared API settings
-- **MANAGEMENT_API_KEY**: Authentication for Management API
-- **LICENSE_API_URL**: Default: https://api.licensespring.com
-- **MANAGEMENT_API_URL**: Default: https://saas.licensespring.com
-
-## Testing Strategy
-
-### Unit Tests
-- Located in `src/utils/__tests__/`
-- Test authentication logic and utility functions
-- Run with `npm test`
-
-### Integration Tests
-- Located in `tests/comprehensive-integration-test.js`
-- Validates all 34 MCP tools against real LicenseSpring API
-- Requires valid API credentials in environment
-- Run with `npm run test:integration`
-
-## CI/CD Pipeline
-
-### GitHub Actions Workflows
-1. **ci.yml**: Runs on push/PR - linting, unit tests, build, integration tests (if secrets available)
-2. **semantic-release.yml**: Automated release based on conventional commits
-
-### Release Automation
-- Conventional commits trigger automatic versioning
-- Use `[release]` in commit messages to trigger releases
-- Semantic release handles version bumps, changelog, GitHub releases, and NPM publishing
-
-## TypeScript Configuration
-
-- Target: ES2022
-- Module: ESNext  
-- Strict mode enabled
-- Source maps and declarations generated
-- Excludes test files from compilation
-
-## Key Dependencies
-
-- **@modelcontextprotocol/sdk**: MCP protocol implementation
-- **axios**: HTTP client for API requests
-- **zod**: Runtime type validation for tool parameters
-- **dotenv**: Environment variable management
-- **semantic-release**: Automated versioning and publishing
+- Never write to stdout from server code. Use the `Logger` (stderr). Load dotenv only via `loadEnv()` (`quiet: true`).
+- Every new tool needs: annotations, a request-mapping test case in the matching `server.test.ts` table, and an entry in `docs/API_COVERAGE.md` and the README.
+- Verify endpoint contracts against https://docs.licensespring.com (append `.md` to a page URL for raw markdown) before changing them.
+- Tests mock HTTP with `createMockAdapter()` (`src/__tests__/helpers.ts`) and connect with the SDK's `InMemoryTransport`; don't hit the network in unit tests.
+- Conventional commits drive semantic-release (`feat!:`/`BREAKING CHANGE:` → major).

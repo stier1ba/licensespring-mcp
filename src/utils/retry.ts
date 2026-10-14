@@ -1,114 +1,51 @@
 /**
- * Retry utility with exponential backoff for API calls
+ * Retry with exponential backoff and jitter.
+ *
+ * Only used for idempotent requests (GET). License API calls such as
+ * add_consumption are not idempotent, so they are never retried.
  */
 
-interface RetryOptions {
+export interface RetryOptions {
   maxRetries?: number;
   initialDelay?: number;
   maxDelay?: number;
   backoffMultiplier?: number;
-  retryableErrors?: (error: unknown) => boolean;
+  shouldRetry?: (error: unknown) => boolean;
   onRetry?: (attempt: number, error: unknown, delay: number) => void;
+  sleep?: (ms: number) => Promise<void>;
+  random?: () => number;
 }
 
-const DEFAULT_OPTIONS: Required<RetryOptions> = {
-  maxRetries: 3,
-  initialDelay: 1000, // 1 second
-  maxDelay: 30000, // 30 seconds
-  backoffMultiplier: 2,
-  retryableErrors: (error: unknown) => {
-    // Retry on network errors and 5xx status codes
-    const axiosError = error as { response?: { status?: number } };
-    if (!axiosError.response) return true; // Network error
-    const status = axiosError.response?.status;
-    return (status !== undefined && (status >= 500 || status === 429)); // Server errors or rate limiting
-  },
-  onRetry: () => {} // Default no-op
-};
+export function isRetryableError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const err = error as { response?: { status?: number }; request?: unknown };
+  if (!err.response) return err.request !== undefined;
+  const status = err.response.status;
+  if (status === undefined) return false;
+  return status >= 500 || status === 429 || status === 408;
+}
 
-/**
- * Execute a function with exponential backoff retry logic
- */
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
-  const opts = { ...DEFAULT_OPTIONS, ...options };
-  let lastError: unknown;
-  
-  for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
+export const defaultSleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
+  const maxRetries = options.maxRetries ?? 3;
+  const initialDelay = options.initialDelay ?? 500;
+  const maxDelay = options.maxDelay ?? 10_000;
+  const multiplier = options.backoffMultiplier ?? 2;
+  const shouldRetry = options.shouldRetry ?? isRetryableError;
+  const sleep = options.sleep ?? defaultSleep;
+  const random = options.random ?? Math.random;
+
+  for (let attempt = 0; ; attempt++) {
     try {
       return await fn();
     } catch (error) {
-      lastError = error;
-      
-      // Check if we should retry
-      if (attempt === opts.maxRetries || !opts.retryableErrors(error)) {
-        throw error;
-      }
-      
-      // Calculate delay with exponential backoff
-      const delay = Math.min(
-        opts.initialDelay * Math.pow(opts.backoffMultiplier, attempt),
-        opts.maxDelay
-      );
-      
-      // Add jitter to prevent thundering herd
-      const jitteredDelay = delay * (0.5 + Math.random() * 0.5);
-      
-      // Notify about retry
-      opts.onRetry(attempt + 1, error, jitteredDelay);
-      
-      // Wait before retrying
-      await sleep(jitteredDelay);
+      if (attempt >= maxRetries || !shouldRetry(error)) throw error;
+      const base = Math.min(initialDelay * multiplier ** attempt, maxDelay);
+      const delay = base * (0.5 + random() * 0.5);
+      options.onRetry?.(attempt + 1, error, delay);
+      await sleep(delay);
     }
   }
-  
-  throw lastError;
 }
-
-/**
- * Sleep for specified milliseconds
- */
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
- * Create a retry wrapper with preset options
- */
-export function createRetryWrapper(defaultOptions: RetryOptions) {
-  return <T>(fn: () => Promise<T>, overrideOptions?: RetryOptions): Promise<T> => {
-    return withRetry(fn, { ...defaultOptions, ...overrideOptions });
-  };
-}
-
-/**
- * Check if an error is retryable based on common patterns
- */
-export function isRetryableError(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-  
-  const axiosError = error as { response?: { status?: number }, request?: unknown };
-  
-  // Network errors are always retryable
-  if (!axiosError.response && axiosError.request) {
-    return true;
-  }
-  
-  // Check HTTP status codes
-  const status = axiosError.response?.status;
-  if (!status) return false;
-  
-  // Retry on server errors and rate limiting
-  if (status >= 500 || status === 429) return true;
-  
-  // Retry on specific client errors that might be transient
-  if (status === 408 || status === 409 || status === 423 || status === 425) {
-    return true;
-  }
-  
-  return false;
-}
-
-export default withRetry;

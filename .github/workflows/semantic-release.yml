@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,11 +27,14 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run unit tests
-        run: npm test
+      - name: Run unit tests (100% coverage enforced)
+        run: npm run test:coverage
 
       - name: Build project
         run: npm run build
+
+      - name: Stdio smoke tests
+        run: npm run test:smoke
 
       - name: Check for API secrets
         id: check-secrets
@@ -56,9 +59,8 @@ jobs:
         run: |
           echo "⚠️ Integration tests skipped - LicenseSpring API secrets not configured"
           echo "To enable integration tests, configure these repository secrets:"
-          echo "- LICENSE_API_KEY (required)"
-          echo "- LICENSE_SHARED_KEY (optional, for enhanced security)"
-          echo "- MANAGEMENT_API_KEY (required)"
+          echo "- LICENSE_API_KEY + LICENSE_SHARED_KEY (or LICENSE_CLIENT_ID + LICENSE_CLIENT_SECRET)"
+          echo "- MANAGEMENT_API_KEY"
 
   release:
     needs: test
@@ -80,7 +82,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
@@ -145,7 +147,7 @@ jobs:
           echo "📋 Release will proceed based on unit tests and build verification"
           echo "🔧 To enable integration tests in CI/CD, configure these repository secrets:"
           echo "  - LICENSE_API_KEY (required)"
-          echo "  - LICENSE_SHARED_KEY (optional, for enhanced security)"
+          echo "  - LICENSE_SHARED_KEY (required with LICENSE_API_KEY)"
           echo "  - MANAGEMENT_API_KEY (required)"
 
       - name: Verify package integrity

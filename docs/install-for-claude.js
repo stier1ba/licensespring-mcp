@@ -122,12 +122,11 @@ class ClaudeInstaller {
     console.log('\n4. 🎯 Example usage:');
     console.log('   "Check the status of license key ABC-123-DEF"');
     console.log('   "List all customers in my LicenseSpring account"');
-    console.log('   "Create a new license for customer john@example.com"');
+    console.log('   "Create an order with one license for customer john@example.com"');
 
-    console.log('\n📚 For subscription tier support:');
-    console.log('   - Leave LICENSE_SHARED_KEY empty for Basic/Standard tiers');
-    console.log('   - Provide LICENSE_SHARED_KEY for Premium/Enterprise tiers');
-    console.log('   - See SUBSCRIPTION_TIERS.md for detailed information');
+    console.log('\n🔑 Credentials:');
+    console.log('   - LICENSE_API_KEY and LICENSE_SHARED_KEY are both required (Settings → Keys)');
+    console.log('   - Or use LICENSE_CLIENT_ID + LICENSE_CLIENT_SECRET for OAuth');
   }
 
   showCurrentConfig() {

@@ -1,118 +1,61 @@
 import {
-  generateLicenseApiSignature,
+  buildHmacAuthorization,
   generateLicenseApiAuthHeader,
+  generateLicenseApiSignature,
   generateManagementApiAuthHeader,
-  validateLicenseApiAuth,
-  validateManagementApiAuth
-} from '../auth';
+  generateOfflineSignature,
+  hmacBase64,
+  httpDate,
+  signingString,
+} from '../auth.js';
+import { FIXED_DATE, FIXED_HTTP_DATE } from '../../__tests__/helpers.js';
 
-describe('Auth Utils', () => {
-  describe('generateLicenseApiSignature', () => {
-    it('should generate a valid HMAC-SHA256 signature', () => {
-      const sharedKey = 'test-shared-key';
-      const apiKey = 'test-api-key';
-      const date = 'Mon, 19 Oct 2020 15:42:27 GMT';
-      
-      const signature = generateLicenseApiSignature(sharedKey, apiKey, date);
-      
-      expect(signature).toBeDefined();
-      expect(typeof signature).toBe('string');
-      expect(signature.length).toBeGreaterThan(0);
-    });
+// Expected values computed independently with:
+//   printf 'licenseSpring\ndate: <date>' | openssl dgst -sha256 -hmac 'shared-secret' -binary | base64
+const REQUEST_SIGNATURE = '5RqVbgZ6s145T0Jtpfc4V9voocbZ4ulIH9WWTzLg9ww=';
+const OFFLINE_SIGNATURE = 'NET2zkzUAwolzrHfXBuYBGWAY9DnI2o8wF0mCUQKTkc=';
 
-    it('should generate different signatures for different inputs', () => {
-      const sharedKey = 'test-shared-key';
-      const apiKey = 'test-api-key';
-      const date1 = 'Mon, 19 Oct 2020 15:42:27 GMT';
-      const date2 = 'Tue, 20 Oct 2020 15:42:27 GMT';
-      
-      const signature1 = generateLicenseApiSignature(sharedKey, apiKey, date1);
-      const signature2 = generateLicenseApiSignature(sharedKey, apiKey, date2);
-      
-      expect(signature1).not.toBe(signature2);
-    });
-
-    it('should include license key and hardware ID in offline signature', () => {
-      const sharedKey = 'test-shared-key';
-      const apiKey = 'test-api-key';
-      const date = 'Mon, 19 Oct 2020 15:42:27 GMT';
-      const licenseKey = 'TEST-LICENSE-KEY';
-      const hardwareId = 'test-hardware-id';
-      
-      const signature1 = generateLicenseApiSignature(sharedKey, apiKey, date);
-      const signature2 = generateLicenseApiSignature(sharedKey, apiKey, date, licenseKey, hardwareId);
-      
-      expect(signature1).not.toBe(signature2);
-    });
+describe('auth', () => {
+  it('builds the documented signing string', () => {
+    expect(signingString(FIXED_HTTP_DATE)).toBe(`licenseSpring\ndate: ${FIXED_HTTP_DATE}`);
   });
 
-  describe('generateLicenseApiAuthHeader', () => {
-    it('should generate auth header with date and authorization', () => {
-      const sharedKey = 'test-shared-key';
-      const apiKey = 'test-api-key';
-      
-      const { date, authorization } = generateLicenseApiAuthHeader(sharedKey, apiKey);
-      
-      expect(date).toBeDefined();
-      expect(authorization).toBeDefined();
-      expect(authorization).toContain('algorithm="hmac-sha256"');
-      expect(authorization).toContain('headers="date"');
-      expect(authorization).toContain(`apikey="${apiKey}"`);
-      expect(authorization).toContain('signature=');
-    });
-
-    it('should generate valid date format', () => {
-      const sharedKey = 'test-shared-key';
-      const apiKey = 'test-api-key';
-      
-      const { date } = generateLicenseApiAuthHeader(sharedKey, apiKey);
-      
-      // Should be a valid UTC date string
-      expect(new Date(date).toUTCString()).toBe(date);
-    });
+  it('formats dates as RFC 7231 GMT', () => {
+    expect(httpDate(FIXED_DATE)).toBe(FIXED_HTTP_DATE);
+    expect(httpDate()).toMatch(/^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/);
   });
 
-  describe('generateManagementApiAuthHeader', () => {
-    it('should generate correct management API auth header', () => {
-      const apiKey = 'test-management-api-key';
-      
-      const authHeader = generateManagementApiAuthHeader(apiKey);
-      
-      expect(authHeader).toBe(`Api-Key ${apiKey}`);
-    });
+  it('matches an independently computed request signature', () => {
+    expect(generateLicenseApiSignature('shared-secret', FIXED_HTTP_DATE)).toBe(REQUEST_SIGNATURE);
+    expect(hmacBase64('shared-secret', signingString(FIXED_HTTP_DATE))).toBe(REQUEST_SIGNATURE);
   });
 
-  describe('validateLicenseApiAuth', () => {
-    it('should not throw for valid credentials', () => {
-      expect(() => {
-        validateLicenseApiAuth('api-key', 'shared-key');
-      }).not.toThrow();
-    });
-
-    it('should throw for missing API key', () => {
-      expect(() => {
-        validateLicenseApiAuth(undefined, 'shared-key');
-      }).toThrow('LICENSE_API_KEY is required');
-    });
-
-    it('should not throw for missing shared key (graceful degradation)', () => {
-      expect(() => {
-        validateLicenseApiAuth('api-key', undefined);
-      }).not.toThrow();
-    });
+  it('builds the Authorization header in the documented format', () => {
+    expect(buildHmacAuthorization('api-key-1', 'sig=')).toBe(
+      'algorithm="hmac-sha256",headers="date",signature="sig=",apikey="api-key-1"',
+    );
   });
 
-  describe('validateManagementApiAuth', () => {
-    it('should not throw for valid API key', () => {
-      expect(() => {
-        validateManagementApiAuth('management-api-key');
-      }).not.toThrow();
-    });
+  it('generates Date + Authorization headers', () => {
+    const { date, authorization } = generateLicenseApiAuthHeader('shared-secret', 'api-key-1', FIXED_DATE);
+    expect(date).toBe(FIXED_HTTP_DATE);
+    expect(authorization).toBe(
+      `algorithm="hmac-sha256",headers="date",signature="${REQUEST_SIGNATURE}",apikey="api-key-1"`,
+    );
+    expect(generateLicenseApiAuthHeader('k', 'a').date).toMatch(/GMT$/);
+  });
 
-    it('should throw for missing API key', () => {
-      expect(() => {
-        validateManagementApiAuth(undefined);
-      }).toThrow('MANAGEMENT_API_KEY is required');
-    });
+  it('matches an independently computed offline payload signature', () => {
+    expect(generateOfflineSignature({
+      signingKey: 'shared-secret',
+      date: FIXED_HTTP_DATE,
+      licenseKeyOrUsername: 'AAAA-BBBB-CCCC',
+      hardwareId: 'hw-123',
+      apiKeyOrClientId: 'api-key-1',
+    })).toBe(OFFLINE_SIGNATURE);
+  });
+
+  it('builds the Management API header', () => {
+    expect(generateManagementApiAuthHeader('mgmt')).toBe('Api-Key mgmt');
   });
 });

@@ -55,21 +55,22 @@ If you prefer manual setup:
    }
    ```
 
-### Subscription Tier Configuration
+### Credentials
 
-**For Basic/Standard LicenseSpring tiers:**
+The License API signs every request, so the API key **and** shared key are both required
+(LicenseSpring portal → Settings → Keys). Alternatively use OAuth client credentials:
+
 ```json
 "env": {
   "LICENSE_API_KEY": "your_api_key",
-  "LICENSE_SHARED_KEY": ""
+  "LICENSE_SHARED_KEY": "your_shared_key"
 }
 ```
 
-**For Premium/Enterprise LicenseSpring tiers:**
 ```json
 "env": {
-  "LICENSE_API_KEY": "your_api_key", 
-  "LICENSE_SHARED_KEY": "your_shared_key"
+  "LICENSE_CLIENT_ID": "auth-company-xxxx",
+  "LICENSE_CLIENT_SECRET": "your_client_secret"
 }
 ```
 
@@ -154,7 +155,7 @@ If you prefer manual setup:
 3. **Users download and extract:**
    ```bash
    tar -xzf licensespring-mcp-v1.0.0.tar.gz
-   node install-for-claude.js install
+   node docs/install-for-claude.js install
    ```
 
 ## 🎯 Usage Examples in Claude Desktop
@@ -173,8 +174,8 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 - *"Show me licenses for customer timothy@company.com"*
 
 ### License Operations
-- *"Create a new license for customer ID 123 and product ID 456"*
-- *"Update license 789 to disable it"*
+- *"Create an order with one license of product ABC for customer john@example.com"*
+- *"Disable license 789"*
 - *"Show me all active licenses"*
 
 ## 🔧 Troubleshooting
@@ -189,7 +190,7 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 **"Authentication failed" errors:**
 - Verify your LicenseSpring API keys are correct
 - Check your subscription tier and shared key requirements
-- See `SUBSCRIPTION_TIERS.md` for detailed guidance
+- LICENSE_API_KEY and LICENSE_SHARED_KEY are both required (or OAuth client credentials)
 
 **"No tools available" in Claude:**
 - Restart Claude Desktop after configuration changes
@@ -201,7 +202,7 @@ Once installed, users can interact with LicenseSpring through Claude Desktop:
 1. **Check the logs:** Claude Desktop shows MCP server logs in its developer console
 2. **Test manually:** Run the servers directly to test functionality
 3. **Verify credentials:** Use the LicenseSpring web interface to confirm API access
-4. **Review documentation:** See `README.md` and `SUBSCRIPTION_TIERS.md`
+4. **Review documentation:** See `README.md`
 
 ## 🚀 Advanced Configuration
 

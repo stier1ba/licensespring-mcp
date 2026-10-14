@@ -31,17 +31,17 @@ class LicenseSpringSetup {
     // Get user credentials
     const licenseApiKey = await this.prompt('📝 Enter your LicenseSpring License API Key: ');
     
-    console.log('\n💡 LICENSE_SHARED_KEY is optional and depends on your subscription tier:');
-    console.log('   - Basic/Standard: Leave empty (press Enter)');
-    console.log('   - Premium/Enterprise: Enter your shared key');
-    
-    const sharedKey = await this.prompt('🔑 Enter your License Shared Key (optional): ');
+    console.log('\n💡 The License API signs every request, so the shared key is required.');
+    console.log('   Find both keys in the LicenseSpring portal under Settings → Keys.');
+
+    const sharedKey = await this.prompt('🔑 Enter your License Shared Key: ');
+    if (!sharedKey) {
+      console.error('❌ LICENSE_SHARED_KEY is required with LICENSE_API_KEY.');
+      process.exit(1);
+    }
     
     const managementApiKey = await this.prompt('📋 Enter your LicenseSpring Management API Key: ');
 
-    // Determine subscription tier
-    const tier = sharedKey ? 'Premium/Enterprise' : 'Basic/Standard';
-    console.log(`\n✅ Detected subscription tier: ${tier}`);
 
     // Create configuration
     const config = {
