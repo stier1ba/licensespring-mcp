@@ -17,18 +17,54 @@
       {
         "preset": "conventionalcommits",
         "releaseRules": [
-          { "type": "feat", "release": "minor" },
-          { "type": "fix", "release": "patch" },
-          { "type": "perf", "release": "patch" },
-          { "type": "revert", "release": "patch" },
-          { "type": "docs", "release": "patch" },
-          { "type": "style", "release": false },
-          { "type": "refactor", "release": "patch" },
-          { "type": "test", "release": false },
-          { "type": "build", "release": "patch" },
-          { "type": "ci", "release": false },
-          { "type": "chore", "release": false },
-          { "breaking": true, "release": "major" }
+          {
+            "type": "feat",
+            "release": "minor"
+          },
+          {
+            "type": "fix",
+            "release": "patch"
+          },
+          {
+            "type": "perf",
+            "release": "patch"
+          },
+          {
+            "type": "revert",
+            "release": "patch"
+          },
+          {
+            "type": "docs",
+            "release": "patch"
+          },
+          {
+            "type": "style",
+            "release": false
+          },
+          {
+            "type": "refactor",
+            "release": "patch"
+          },
+          {
+            "type": "test",
+            "release": false
+          },
+          {
+            "type": "build",
+            "release": "patch"
+          },
+          {
+            "type": "ci",
+            "release": false
+          },
+          {
+            "type": "chore",
+            "release": false
+          },
+          {
+            "breaking": true,
+            "release": "major"
+          }
         ]
       }
     ],
@@ -38,15 +74,42 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
-            { "type": "feat", "section": "🚀 Features" },
-            { "type": "fix", "section": "🐛 Bug Fixes" },
-            { "type": "perf", "section": "⚡ Performance Improvements" },
-            { "type": "revert", "section": "⏪ Reverts" },
-            { "type": "docs", "section": "📚 Documentation" },
-            { "type": "refactor", "section": "♻️ Code Refactoring" },
-            { "type": "test", "section": "✅ Tests" },
-            { "type": "build", "section": "🔧 Build System" },
-            { "type": "ci", "section": "👷 CI/CD" }
+            {
+              "type": "feat",
+              "section": "🚀 Features"
+            },
+            {
+              "type": "fix",
+              "section": "🐛 Bug Fixes"
+            },
+            {
+              "type": "perf",
+              "section": "⚡ Performance Improvements"
+            },
+            {
+              "type": "revert",
+              "section": "⏪ Reverts"
+            },
+            {
+              "type": "docs",
+              "section": "📚 Documentation"
+            },
+            {
+              "type": "refactor",
+              "section": "♻️ Code Refactoring"
+            },
+            {
+              "type": "test",
+              "section": "✅ Tests"
+            },
+            {
+              "type": "build",
+              "section": "🔧 Build System"
+            },
+            {
+              "type": "ci",
+              "section": "👷 CI/CD"
+            }
           ]
         }
       }
@@ -62,7 +125,7 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "tarballDir": "dist"
+        "tarballDir": "release-tarball"
       }
     ],
     [
@@ -70,7 +133,7 @@
       {
         "assets": [
           {
-            "path": "dist/*.tgz",
+            "path": "release-tarball/*.tgz",
             "label": "NPM Package"
           },
           {
@@ -92,9 +155,10 @@
         ],
         "addReleases": "bottom",
         "successComment": "🎉 This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version [${nextRelease.version}](${releases.filter(release => release.name === 'GitHub')[0].url}) 🎉\n\n📦 **NPM Package**: [@tfedorko/licensespring-mcp-server@${nextRelease.version}](https://www.npmjs.com/package/@tfedorko/licensespring-mcp-server/v/${nextRelease.version})\n\n🔗 **Installation**: `npm install @tfedorko/licensespring-mcp-server@${nextRelease.version}`",
-        "failComment": "❌ The release from the `${branch.name}` branch had an error and the following issues weren't resolved:\n\n${errors.map(error => `- ${error.message}`).join('\\n')}",
-        "releasedLabels": ["released<%= nextRelease.channel ? ` on @${nextRelease.channel}` : '' %>"],
-        "addReleases": "bottom"
+        "failComment": "❌ The release from the `<%= branch.name %>` branch failed with:\n\n<%= errors.map(function (error) { return '- ' + error.message; }).join('\\n') %>",
+        "releasedLabels": [
+          "released<%= nextRelease.channel ? ` on @${nextRelease.channel}` : '' %>"
+        ]
       }
     ],
     [

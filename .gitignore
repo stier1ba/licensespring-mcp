@@ -91,3 +91,6 @@ coverage/
 
 # TernJS port file
 .tern-port
+
+# semantic-release npm tarball
+release-tarball/
