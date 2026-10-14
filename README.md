@@ -203,6 +203,7 @@ Releases are automated with semantic-release from [Conventional Commits](https:/
 | --- | --- |
 | `Configuration error: LICENSE_SHARED_KEY is required…` | Add the shared key from Settings → Keys, or use OAuth credentials. |
 | `[hmac_required]` or `[signature_mismatch]` | The shared key is missing or wrong. |
+| Management API returns `403 Authentication credentials were not provided.` on every call | The key was rejected: LicenseSpring returns this for invalid, revoked or mistyped keys, not only missing ones. Copy the key again from Settings → Keys. A surrounding `Api-Key ` prefix or quotes are stripped automatically. `npm run test:integration` reports the key's length and format (never its value). |
 | `[date_header_diff]` | The machine clock is more than 15 minutes off. Sync it. |
 | `HTTP 429: rate limit exceeded` | LicenseSpring limits requests per company per 60 seconds ([rate limits](https://docs.licensespring.com/license-api/rate-limiting)). The server retries automatically. Wait for the window to reset if it persists. |
 | Client shows "Connection closed" on startup | Check the client's MCP log. Configuration errors are printed to stderr before the server exits. |

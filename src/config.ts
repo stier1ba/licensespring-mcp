@@ -41,7 +41,8 @@ export interface ManagementApiConfig extends HttpOptions {
 type Env = Record<string, string | undefined>;
 
 function value(env: Env, key: string): string | undefined {
-  const raw = env[key]?.trim();
+  // Values pasted into secret stores or client configs often keep their surrounding quotes.
+  const raw = env[key]?.trim().replace(/^(['"])(.*)\1$/, '$2').trim();
   return raw ? raw : undefined;
 }
 
@@ -142,7 +143,8 @@ export const MANAGEMENT_TOOLSET_NAMES = [
 ] as const;
 
 export function loadManagementApiConfig(env: Env = process.env): ManagementApiConfig {
-  const apiKey = value(env, 'MANAGEMENT_API_KEY');
+  // Accept a key pasted together with its header scheme ("Api-Key <key>").
+  const apiKey = value(env, 'MANAGEMENT_API_KEY')?.replace(/^api-key\s+/i, '');
   if (!apiKey) {
     throw new ConfigError('MANAGEMENT_API_KEY is required (find it in the LicenseSpring platform under Settings > Keys)');
   }

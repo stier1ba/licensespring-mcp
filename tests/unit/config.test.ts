@@ -92,6 +92,23 @@ describe('loadManagementApiConfig', () => {
     expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_API_URL: 'https://m' }).baseUrl).toBe('https://m');
   });
 
+  it.each([
+    ['Api-Key mk.123', 'mk.123'],
+    ['api-key   mk.123', 'mk.123'],
+    ['"mk.123"', 'mk.123'],
+    ["'Api-Key mk.123'", 'mk.123'],
+  ])('normalizes MANAGEMENT_API_KEY=%s', (raw, expected) => {
+    expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: raw }).apiKey).toBe(expected);
+  });
+
+  it('rejects a MANAGEMENT_API_KEY that is only the header scheme or quotes', () => {
+    expect(() => loadManagementApiConfig({ MANAGEMENT_API_KEY: '""' })).toThrow(/MANAGEMENT_API_KEY is required/);
+  });
+
+  it('strips surrounding quotes from License API credentials', () => {
+    expect(loadLicenseApiConfig({ LICENSE_API_KEY: '"ak"', LICENSE_SHARED_KEY: "'sk'" }).auth).toMatchObject({ apiKey: 'ak', sharedKey: 'sk' });
+  });
+
   it('parses MANAGEMENT_TOOLSETS', () => {
     expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_TOOLSETS: ' orders, devices,orders ' }).toolsets).toEqual(['orders', 'devices']);
     expect(loadManagementApiConfig({ MANAGEMENT_API_KEY: 'mk', MANAGEMENT_TOOLSETS: 'ALL' }).toolsets).toBeUndefined();

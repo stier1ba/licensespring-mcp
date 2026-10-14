@@ -47,12 +47,32 @@ const suites = [
   },
 ];
 
+/**
+ * Describe a credential's shape without revealing it, to diagnose misconfigured secrets.
+ * Management API keys look like the documented example `h8ZTleS1.OyCHhCST5c8K9A6gjV9wA1HLxWpUVSFv`.
+ */
+function describeKey(name, raw = '') {
+  const trimmed = raw.trim();
+  const quoted = /^(['"]).*\1$/.test(trimmed);
+  const unquoted = quoted ? trimmed.slice(1, -1).trim() : trimmed;
+  const prefixed = /^api-key\s+/i.test(unquoted);
+  const key = unquoted.replace(/^api-key\s+/i, '');
+  const notes = [`${key.length} chars after normalization`];
+  notes.push(/^[A-Za-z0-9]{8}\.[A-Za-z0-9]{32}$/.test(key) ? 'matches the <8>.<32> key format' : 'does NOT match the <8>.<32> key format');
+  if (prefixed) notes.push('had an "Api-Key " prefix (stripped by the server)');
+  if (quoted) notes.push('was wrapped in quotes (stripped by the server)');
+  if (/\s/.test(key)) notes.push('contains whitespace');
+  return `${name}: ${notes.join(', ')}`;
+}
+
 let failures = 0;
+let rejected = 0;
 for (const suite of suites) {
   if (!suite.enabled) {
     console.log(`- ${suite.name}: skipped (credentials not configured)`);
     continue;
   }
+  if (suite.name === 'Management API') console.log(`  ${describeKey('MANAGEMENT_API_KEY', process.env.MANAGEMENT_API_KEY)}`);
   const transport = new StdioClientTransport({ command: process.execPath, args: [dist(suite.entry)], env: process.env, stderr: 'inherit' });
   const client = new Client({ name: 'licensespring-integration', version: '1.0.0' });
   await client.connect(transport);
@@ -64,6 +84,7 @@ for (const suite of suites) {
       const text = result.content?.[0]?.text ?? '';
       if (result.isError) {
         failures++;
+        if (text.includes('HTTP 403')) rejected++;
         console.log(`  ✗ ${name}: ${text}`);
       } else {
         console.log(`  ✓ ${name}`);
@@ -76,6 +97,10 @@ for (const suite of suites) {
 
 if (failures > 0) {
   console.error(`${failures} integration call(s) failed`);
+  if (rejected > 0) console.error(
+    'A 403 "Authentication credentials were not provided." on every Management API call means the key was rejected: ' +
+    'LicenseSpring returns it for invalid, revoked or mistyped keys as well as missing ones. Check the key under Settings > Keys.',
+  );
   process.exit(1);
 }
 console.log('Integration checks passed');
