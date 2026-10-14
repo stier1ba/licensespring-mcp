@@ -89,16 +89,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install semantic-release dependencies
-        run: |
-          npm install -D @semantic-release/changelog@^6.0.0
-          npm install -D @semantic-release/git@^10.0.0
-          npm install -D @semantic-release/github@^9.0.0
-          npm install -D @semantic-release/npm@^11.0.0
-          npm install -D @semantic-release/commit-analyzer@^11.0.0
-          npm install -D @semantic-release/release-notes-generator@^12.0.0
-          npm install -D semantic-release@^22.0.0
-          npm install -D conventional-changelog-conventionalcommits@^7.0.0
 
       - name: Build project
         run: npm run build
